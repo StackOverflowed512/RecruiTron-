@@ -96,55 +96,57 @@ def get_questions():
         experience_level = session.get('experience_level', 'mid')
         
         prompt = f"""
-        Generate 5 technical interview questions for a {role} position ({domain} domain) at {experience_level} level.
-        Candidate's skills: {', '.join(skills)}
+        You are an expert technical interviewer. Generate 5 unique technical interview questions.
+
+        Candidate Profile:
+        Role: {role}
+        Domain: {domain}
+        Skills: {', '.join(skills)}
+        Level: {experience_level}
 
         Create questions that:
-        1. Focus on practical problem-solving using {', '.join(skills[:3])}
-        2. Include system design/architecture relevant to {domain}
-        3. Cover best practices and real-world scenarios
-        4. Test both theoretical understanding and implementation skills
-        5. Match {experience_level} level complexity
+        1. Test implementation using {skills[0] if skills else 'primary skill'}
+        2. Cover system design for {domain}
+        3. Test problem-solving with {skills[1] if len(skills) > 1 else 'core technology'}
+        4. Test integration of {', '.join(skills[:2])}
+        5. Cover best practices in {domain}
 
-        For each question:
-        - Start with a real-world scenario
-        - Focus on specific technologies from their skill set
-        - Require detailed technical explanations
-        - Test problem-solving approach
-
-        Return ONLY a JSON array of 5 questions. Format:
+        Return ONLY a JSON array in this exact format:
         [
-            "Scenario-based question using {skills[0] if skills else 'primary skill'}",
-            "Design/architecture question for {domain}",
-            "Implementation question using {skills[1] if len(skills) > 1 else 'relevant technology'}",
-            "Problem-solving question with {skills[2] if len(skills) > 2 else 'core technology'}",
-            "Best practices question about {domain} development"
+            "Question 1 text here",
+            "Question 2 text here",
+            "Question 3 text here",
+            "Question 4 text here",
+            "Question 5 text here"
         ]
+        Do not include any other text or formatting.
         """
+
+        # Generate questions using Gemini
+        response = model.generate_content(prompt)
+        response_text = response.text.strip()
         
-        try:
-            response = model.generate_content(prompt)
-            response_text = response.text.strip()
+        # Extract JSON array from response
+        json_match = re.search(r'\[.*?\]', response_text, re.DOTALL)
+        if not json_match:
+            raise ValueError("Invalid response format from Gemini")
             
-            json_match = re.search(r'\[.*?\]', response_text, re.DOTALL)
-            if not json_match:
-                return jsonify({'error': 'Invalid response format'}), 500
-                
-            questions = json.loads(json_match.group())
-            
-            if not isinstance(questions, list) or len(questions) != 5:
-                return jsonify({'error': 'Invalid questions format'}), 500
-            
-            session['current_questions'] = questions
-            
-            return jsonify({
-                'success': True,
-                'questions': questions
-            })
-            
-        except Exception as e:
-            print(f"Error generating questions: {str(e)}")
-            return jsonify({'error': str(e)}), 500
+        questions = json.loads(json_match.group())
+        
+        if not isinstance(questions, list) or len(questions) != 5:
+            raise ValueError("Invalid number of questions")
+        
+        # Store questions in session
+        session['current_questions'] = questions
+        
+        return jsonify({
+            'success': True,
+            'questions': questions
+        })
+        
+    except Exception as e:
+        print(f"Error generating questions: {str(e)}")
+        return jsonify({'error': str(e)}), 500
             
     except Exception as e:
         print(f"Error in get_questions: {str(e)}")
