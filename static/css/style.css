@@ -449,3 +449,202 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* Enhanced Interview Page Styles */
+.interview-section {
+    min-height: 100vh;
+    position: relative;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(13, 13, 23, 0.95));
+    backdrop-filter: blur(10px);
+}
+
+.question-section {
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.question-section h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.8rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: titleGlow 2s infinite alternate;
+}
+
+@keyframes titleGlow {
+    from {
+        text-shadow: 0 0 20px rgba(0, 255, 157, 0.5),
+                     0 0 40px rgba(0, 255, 157, 0.3);
+    }
+    to {
+        text-shadow: 0 0 30px rgba(0, 255, 157, 0.7),
+                     0 0 60px rgba(0, 255, 157, 0.4);
+    }
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    margin: 2rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 10px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 20px rgba(0, 255, 157, 0.4);
+}
+
+#progressText {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin: 1rem 0 2rem;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.question-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin: 2rem 0;
+    border: 1px solid rgba(0, 255, 157, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(10px);
+}
+
+.question-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+    box-shadow: 0 15px 40px rgba(0, 255, 157, 0.15);
+}
+
+#question {
+    font-size: 1.3rem;
+    line-height: 1.8;
+    color: var(--light-color);
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border-left: 3px solid var(--primary-color);
+    background: rgba(0, 255, 157, 0.05);
+    border-radius: 0 10px 10px 0;
+}
+
+#response {
+    width: 100%;
+    min-height: 200px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(0, 255, 157, 0.2);
+    border-radius: 15px;
+    padding: 1.5rem;
+    color: var(--light-color);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    resize: vertical;
+    transition: all 0.3s ease;
+}
+
+#response:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 20px rgba(0, 255, 157, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--dark-color);
+    padding: 1.2rem 2.5rem;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 2rem;
+    transition: all 0.4s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 255, 157, 0.4);
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.loading-questions {
+    text-align: center;
+    padding: 3rem;
+}
+
+.loader {
+    width: 60px;
+    height: 60px;
+    border: 3px solid transparent;
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    margin: 2rem auto;
+    animation: spin 1s linear infinite;
+    box-shadow: 0 0 20px rgba(0, 255, 157, 0.2);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .interview-section {
+        padding: 1rem;
+    }
+
+    .question-section h2 {
+        font-size: 2rem;
+    }
+
+    .question-card {
+        padding: 1.5rem;
+    }
+
+    #question {
+        font-size: 1.1rem;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 1rem 2rem;
+    }
+}
