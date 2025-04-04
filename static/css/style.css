@@ -15,12 +15,18 @@
     box-sizing: border-box;
 }
 
+/* Update the body cursor style */
 body {
     font-family: 'Roboto', sans-serif;
     background: var(--dark-color);
     color: var(--light-color);
     line-height: 1.6;
     overflow-x: hidden;
+    cursor: default; /* Changed from 'none' to 'default' */
+}
+
+/* Add a class for torch cursor */
+body.torch-effect {
     cursor: none;
 }
 
@@ -449,7 +455,7 @@ body {
         grid-template-columns: 1fr;
     }
 }
-
+ 
 /* Enhanced Interview Page Styles */
 .interview-section {
     min-height: 100vh;

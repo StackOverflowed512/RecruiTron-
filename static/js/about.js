@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Add torch effect class to body
+    document.body.classList.add('torch-effect');
+
     // Create torch element
     const torch = document.createElement("div");
     torch.className = "cursor-torch";
@@ -64,4 +67,9 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(() => {
         torch.style.transition = "opacity 0.3s ease";
     }, 100);
+
+    // Clean up when leaving the page
+    window.addEventListener('beforeunload', function() {
+        document.body.classList.remove('torch-effect');
+    });
 });
