@@ -1,0 +1,56 @@
+{
+    "easy": [
+        {
+            "question": "Tell me about your technical background.",
+            "type": "behavioral"
+        },
+        {
+            "question": "What programming languages are you most comfortable with?",
+            "type": "technical"
+        },
+        {
+            "question": "Explain the difference between an array and a linked list.",
+            "type": "technical"
+        },
+        {
+            "question": "How do you stay updated with the latest technology trends?",
+            "type": "behavioral"
+        }
+    ],
+    "medium": [
+        {
+            "question": "Explain the concept of object-oriented programming.",
+            "type": "technical"
+        },
+        {
+            "question": "How would you optimize a slow-performing SQL query?",
+            "type": "technical"
+        },
+        {
+            "question": "Describe a challenging technical problem you solved recently.",
+            "type": "situational"
+        },
+        {
+            "question": "How do you approach debugging a complex issue?",
+            "type": "behavioral"
+        }
+    ],
+    "hard": [
+        {
+            "question": "Design a system that can handle millions of concurrent users.",
+            "type": "technical"
+        },
+        {
+            "question": "Explain the CAP theorem and its implications in distributed systems.",
+            "type": "technical"
+        },
+        {
+            "question": "How would you implement a secure authentication system?",
+            "type": "technical"
+        },
+        {
+            "question": "Describe a time when you had to make a difficult technical decision with limited information.",
+            "type": "situational"
+        }
+    ]
+}

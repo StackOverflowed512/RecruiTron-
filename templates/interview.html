@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Add favicon to prevent 404 error -->
+    <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
+</head>
+<body>
+    <div class="container">
+        <div class="interview-section">
+            <!-- Video section remains hidden initially -->
+            <div class="video-section" style="display: none;">
+                <video id="videoElement" autoplay playsinline></video>
+                <canvas id="canvasElement" style="display: none;"></canvas>
+            </div>
+            
+            <div class="question-section">
+                <h2>Technical Interview</h2>
+                <div id="progressBar" class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+                <p id="progressText">Question 1 of 5</p>
+                
+                <div class="question-card">
+                    <p id="question">Loading question...</p>
+                    <textarea id="response" rows="6" placeholder="Type your answer here..."></textarea>
+                    <button onclick="submitAnswer()" class="btn">Submit Answer</button>
+                </div>
+                
+                <div id="score" style="display: none;" class="feedback-section"></div>
+                <div id="feedback" style="display: none;" class="feedback-section"></div>
+                <div id="final-score" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initInterviewPage();
+        });
+    </script>
+</body>
+</html>

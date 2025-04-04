@@ -1,0 +1,56 @@
+{
+    "easy": [
+        {
+            "question": "Explain the difference between supervised and unsupervised learning.",
+            "type": "technical"
+        },
+        {
+            "question": "What tools do you use for data visualization?",
+            "type": "technical"
+        },
+        {
+            "question": "How would you handle missing data in a dataset?",
+            "type": "technical"
+        },
+        {
+            "question": "Describe your experience with Python libraries like Pandas and NumPy.",
+            "type": "technical"
+        }
+    ],
+    "medium": [
+        {
+            "question": "Explain how a random forest works.",
+            "type": "technical"
+        },
+        {
+            "question": "How would you detect and handle outliers in a dataset?",
+            "type": "technical"
+        },
+        {
+            "question": "Describe a data science project you've worked on from start to finish.",
+            "type": "situational"
+        },
+        {
+            "question": "How do you evaluate the performance of a machine learning model?",
+            "type": "technical"
+        }
+    ],
+    "hard": [
+        {
+            "question": "Explain the mathematics behind gradient descent.",
+            "type": "technical"
+        },
+        {
+            "question": "How would you build a recommendation system for an e-commerce website?",
+            "type": "technical"
+        },
+        {
+            "question": "Describe a situation where you had to make a trade-off between model complexity and interpretability.",
+            "type": "situational"
+        },
+        {
+            "question": "How would you design an A/B test to measure the impact of a new feature?",
+            "type": "technical"
+        }
+    ]
+}

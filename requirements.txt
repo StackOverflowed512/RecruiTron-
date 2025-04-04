@@ -1,0 +1,12 @@
+flask
+python-docx
+PyPDF2
+spacy==3.7.2
+nltk
+textblob==0.17.1
+numpy
+opencv-python
+librosa
+soundfile
+python-dotenv
+pillow

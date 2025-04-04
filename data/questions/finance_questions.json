@@ -1,0 +1,56 @@
+{
+    "easy": [
+        {
+            "question": "What financial metrics do you find most important when evaluating a company?",
+            "type": "technical"
+        },
+        {
+            "question": "Explain the difference between CAPEX and OPEX.",
+            "type": "technical"
+        },
+        {
+            "question": "How do you stay updated with financial news and trends?",
+            "type": "behavioral"
+        },
+        {
+            "question": "Describe your experience with financial modeling.",
+            "type": "technical"
+        }
+    ],
+    "medium": [
+        {
+            "question": "Walk me through a DCF (Discounted Cash Flow) analysis.",
+            "type": "technical"
+        },
+        {
+            "question": "How would you evaluate whether a company should take on more debt?",
+            "type": "technical"
+        },
+        {
+            "question": "Describe a time when you identified a financial risk and how you addressed it.",
+            "type": "situational"
+        },
+        {
+            "question": "Explain how interest rate changes affect different sectors of the economy.",
+            "type": "technical"
+        }
+    ],
+    "hard": [
+        {
+            "question": "How would you value a private company with limited financial information?",
+            "type": "technical"
+        },
+        {
+            "question": "Explain how you would analyze a potential merger or acquisition.",
+            "type": "technical"
+        },
+        {
+            "question": "Describe a situation where your financial analysis led to a strategic business decision.",
+            "type": "situational"
+        },
+        {
+            "question": "How would you design a hedging strategy for a multinational company?",
+            "type": "technical"
+        }
+    ]
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Virtual Interviewer</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="/static/img/logo.png" alt="AI Interviewer Logo" class="logo">
+            <h1>AI Virtual Interviewer</h1>
+            <p>Practice your interview skills with our AI-powered interviewer</p>
+        </header>
+
+        <main>
+            <div class="upload-section">
+                <h2>Upload Your Resume</h2>
+                <form id="resumeForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="file" id="resume" name="resume" accept=".pdf,.docx,.txt" required>
+                        <label for="resume">Choose file</label>
+                    </div>
+                    <button type="submit" class="btn">Start Interview</button>
+                </form>
+                <div id="loading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Analyzing your resume...</p>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <h3>Adaptive Questions</h3>
+                    <p>Questions adjust based on your responses</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Real-time Feedback</h3>
+                    <p>Get immediate analysis of your performance</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Multi-modal Analysis</h3>
+                    <p>We analyze your speech, text, and facial expressions</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
