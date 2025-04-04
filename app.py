@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, session
 import os
 import json
+import re  # Add this import
 from werkzeug.utils import secure_filename
 from models.resume_analyzer import ResumeAnalyzer
 from models.sentiment_analyzer import SentimentAnalyzer
@@ -89,46 +90,51 @@ def get_questions():
         if 'role' not in session or 'skills' not in session:
             return jsonify({'error': 'Session expired'}), 400
             
-        role = session.get('role', 'General')
+        role = session.get('role', 'Software Developer')
+        domain = session.get('domain', 'General')
         skills = session.get('skills', [])
+        experience_level = session.get('experience_level', 'mid')
         
-        # Generate questions using Gemini
         prompt = f"""
-        Generate 5 technical interview questions for a {role} position.
-        Required skills: {', '.join(skills)}
+        Generate 5 technical interview questions for a {role} position ({domain} domain) at {experience_level} level.
+        Candidate's skills: {', '.join(skills)}
 
-        Format your response EXACTLY as a JSON array like this:
+        Create questions that:
+        1. Focus on practical problem-solving using {', '.join(skills[:3])}
+        2. Include system design/architecture relevant to {domain}
+        3. Cover best practices and real-world scenarios
+        4. Test both theoretical understanding and implementation skills
+        5. Match {experience_level} level complexity
+
+        For each question:
+        - Start with a real-world scenario
+        - Focus on specific technologies from their skill set
+        - Require detailed technical explanations
+        - Test problem-solving approach
+
+        Return ONLY a JSON array of 5 questions. Format:
         [
-            "Question 1: What is your experience with {skills[0] if skills else 'programming'}?",
-            "Question 2: Describe a technical challenge you faced with {skills[1] if len(skills) > 1 else 'your main technology'}.",
-            "Question 3: How would you implement...",
-            "Question 4: Explain the concept of...",
-            "Question 5: What are the best practices for..."
+            "Scenario-based question using {skills[0] if skills else 'primary skill'}",
+            "Design/architecture question for {domain}",
+            "Implementation question using {skills[1] if len(skills) > 1 else 'relevant technology'}",
+            "Problem-solving question with {skills[2] if len(skills) > 2 else 'core technology'}",
+            "Best practices question about {domain} development"
         ]
-
-        Make questions specific to the role and skills. Return ONLY the JSON array, no other text.
         """
         
         try:
             response = model.generate_content(prompt)
-            # Clean the response text to ensure it's valid JSON
             response_text = response.text.strip()
-            if not response_text.startswith('['):
-                # Extract JSON array if it's wrapped in other text
-                import re
-                json_match = re.search(r'\[.*\]', response_text, re.DOTALL)
-                if json_match:
-                    response_text = json_match.group()
-                else:
-                    raise ValueError("Invalid response format")
             
-            questions = json.loads(response_text)
+            json_match = re.search(r'\[.*?\]', response_text, re.DOTALL)
+            if not json_match:
+                return jsonify({'error': 'Invalid response format'}), 500
+                
+            questions = json.loads(json_match.group())
             
-            # Validate questions format
             if not isinstance(questions, list) or len(questions) != 5:
-                raise ValueError("Invalid questions format")
+                return jsonify({'error': 'Invalid questions format'}), 500
             
-            # Store questions in session
             session['current_questions'] = questions
             
             return jsonify({
@@ -136,20 +142,13 @@ def get_questions():
                 'questions': questions
             })
             
-        except json.JSONDecodeError as e:
-            print(f"JSON parsing error: {e}")
-            print(f"Response text: {response_text}")
-            return jsonify({
-                'success': False,
-                'error': 'Failed to parse questions'
-            }), 500
+        except Exception as e:
+            print(f"Error generating questions: {str(e)}")
+            return jsonify({'error': str(e)}), 500
             
     except Exception as e:
-        print(f"Error in get_questions: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        print(f"Error in get_questions: {str(e)}")
+        return jsonify({'error': str(e)}), 500
         
         prompt = f"""
         You are an expert technical interviewer for {role} position.

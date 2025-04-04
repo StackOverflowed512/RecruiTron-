@@ -55,81 +55,91 @@ class ResumeAnalyzer:
         text = self.extract_text(file_path)
         
         prompt = f"""
-        Analyze the following resume text and extract the most likely job role/position 
-        the candidate is applying for. Also identify their experience level (entry, mid, senior).
-        
-        Return your response in JSON format with keys: 'role', 'experience_level', 'summary'.
-        
+        Analyze this resume text and provide a detailed role analysis.
+        Focus on:
+        1. Primary role/position based on recent experience
+        2. Technical domain (e.g., frontend, backend, full-stack, data science, devops)
+        3. Experience level based on years and responsibilities
+        4. Key technologies and frameworks used
+
+        Return ONLY a JSON object with this exact format:
+        {{
+            "role": "specific job title",
+            "domain": "technical domain",
+            "experience_level": "entry/mid/senior",
+            "years_of_experience": number,
+            "primary_technologies": ["tech1", "tech2", "tech3"],
+            "summary": "brief role summary"
+        }}
+
         Resume Text:
-        {text[:10000]}  # Limit to first 10k chars to avoid context length issues
+        {text[:10000]}
         """
         
         try:
             response = self.model.generate_content(prompt)
             result = self._parse_json_response(response.text)
-            return result if isinstance(result, dict) else {
-                'role': 'General',
+            if isinstance(result, dict):
+                return {
+                    'role': result.get('role', 'Software Developer'),
+                    'experience_level': result.get('experience_level', 'mid'),
+                    'domain': result.get('domain', 'General'),
+                    'summary': result.get('summary', ''),
+                    'technologies': result.get('primary_technologies', [])
+                }
+            return {
+                'role': 'Software Developer',
                 'experience_level': 'mid',
-                'summary': 'No specific role identified'
+                'domain': 'General',
+                'summary': 'No specific role identified',
+                'technologies': []
             }
         except Exception as e:
             print(f"Error extracting role info: {e}")
             return {
-                'role': 'General',
+                'role': 'Software Developer',
                 'experience_level': 'mid',
-                'summary': 'Error analyzing resume'
+                'domain': 'General',
+                'summary': 'Error analyzing resume',
+                'technologies': []
             }
-
-    def _extract_role_info_with_rules(self, file_path: str) -> Dict:
-        """Extract role information using rule-based approach"""
-        text = self.extract_text(file_path)
-        text_lower = text.lower()
-        
-        # Find the most likely role
-        role_matches = {}
-        for role, keywords in self.role_keywords.items():
-            matches = sum(1 for keyword in keywords if keyword.lower() in text_lower)
-            if matches > 0:
-                role_matches[role] = matches
-        
-        # Return the role with the most keyword matches
-        if role_matches:
-            role = max(role_matches, key=role_matches.get)
-            return {
-                "role": role,
-                "experience_level": "mid",
-                "summary": f"Identified as {role} based on keyword matches"
-            }
-        else:
-            return {
-                "role": "General",
-                "experience_level": "mid",
-                "summary": "No specific role identified"
-            }
-
-    def extract_skills(self, file_path: str) -> List[str]:
-        """Extract skills from resume"""
-        if self.model:
-            return self._extract_skills_with_gemini(file_path)
-        else:
-            return self._extract_skills_with_rules(file_path)
 
     def _extract_skills_with_gemini(self, file_path: str) -> List[str]:
         """Extract skills using Gemini AI"""
         text = self.extract_text(file_path)
         
         prompt = f"""
-        Extract a list of technical and professional skills from the following resume text.
-        Return only a JSON array of the top 15 most relevant skills.
-        
+        Analyze this resume and extract ALL technical skills, including:
+        1. Programming languages
+        2. Frameworks and libraries
+        3. Tools and platforms
+        4. Methodologies
+        5. Domain-specific skills
+
+        Group skills by category and return ONLY a JSON object like this:
+        {{
+            "programming_languages": ["language1", "language2"],
+            "frameworks": ["framework1", "framework2"],
+            "tools": ["tool1", "tool2"],
+            "platforms": ["platform1", "platform2"],
+            "other_skills": ["skill1", "skill2"]
+        }}
+
         Resume Text:
-        {text[:10000]}  # Limit to first 10k chars
+        {text[:10000]}
         """
         
         try:
             response = self.model.generate_content(prompt)
-            skills = self._parse_json_response(response.text)
-            return skills if isinstance(skills, list) else []
+            skills_dict = self._parse_json_response(response.text)
+            if isinstance(skills_dict, dict):
+                # Flatten and combine all skills
+                all_skills = []
+                for skill_list in skills_dict.values():
+                    if isinstance(skill_list, list):
+                        all_skills.extend(skill_list)
+                return list(set(all_skills))  # Remove duplicates
+            return []
         except Exception as e:
             print(f"Error extracting skills: {e}")
             return []

@@ -62,23 +62,44 @@ let currentQuestionIndex = 0;
 
 async function initInterviewPage() {
     try {
+        // Show loading state
+        const questionElement = document.getElementById('question');
+        questionElement.innerHTML = `
+            <div class="loading-questions">
+                <p>Generating personalized interview questions...</p>
+                <div class="loader"></div>
+            </div>
+        `;
+
         const response = await fetch('/get_questions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            credentials: 'same-origin'
         });
 
         const data = await response.json();
-        if (data.success && data.questions) {
+        console.log('Response data:', data); // Debug log
+
+        if (!response.ok) {
+            throw new Error(data.error || `HTTP error! status: ${response.status}`);
+        }
+
+        if (data.success && Array.isArray(data.questions) && data.questions.length > 0) {
             questions = data.questions;
             displayCurrentQuestion();
         } else {
-            throw new Error(data.error || 'Failed to load questions');
+            throw new Error('Invalid questions format received');
         }
     } catch (error) {
         console.error('Error:', error);
-        document.getElementById('question').textContent = 'Error loading questions. Please refresh the page.';
+        document.getElementById('question').innerHTML = `
+            <div class="error-message">
+                <p>${error.message || 'Error loading questions. Please try again.'}</p>
+                <button onclick="window.location.href='/'" class="btn">Return to Home</button>
+            </div>
+        `;
     }
 }
 
@@ -126,12 +147,7 @@ function submitAnswer() {
         }),
         credentials: 'same-origin'
     })
-    .then(res => {
-        if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.json();
-    })
+    .then(res => res.json())
     .then(data => {
         if (data.success) {
             displayFeedback(data.feedback);
@@ -156,7 +172,6 @@ function submitAnswer() {
         alert('Failed to submit answer. Please try again.');
     })
     .finally(() => {
-        // Reset button state
         submitButton.disabled = false;
         submitButton.textContent = 'Submit Answer';
     });
