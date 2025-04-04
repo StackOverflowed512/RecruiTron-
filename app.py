@@ -21,12 +21,12 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.config['UPLOAD_FOLDER'] = 'uploads/'
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 
 
-# Ensure upload directory exists
+
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Initialize components with Gemini model
+
 resume_analyzer = ResumeAnalyzer(model)
 sentiment_analyzer = SentimentAnalyzer(model)
 video_analyzer = VideoAnalyzer()

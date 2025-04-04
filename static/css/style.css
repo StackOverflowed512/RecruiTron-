@@ -268,3 +268,160 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* ... existing styles ... */
+
+/* Interview Page Specific Styles */
+.interview-section {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(26, 26, 46, 0.8);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 255, 157, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.question-section {
+    padding: 2rem;
+}
+
+.question-section h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.progress-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    margin: 1rem 0;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+}
+
+#progressText {
+    text-align: center;
+    font-size: 1rem;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.question-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 15px;
+    margin: 2rem 0;
+    border: 1px solid rgba(0, 255, 157, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.question-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 255, 157, 0.1);
+}
+
+#question {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: var(--light-color);
+}
+
+#response {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(0, 255, 157, 0.3);
+    border-radius: 10px;
+    padding: 1rem;
+    color: var(--light-color);
+    font-size: 1rem;
+    resize: vertical;
+    min-height: 150px;
+    transition: border-color 0.3s ease;
+}
+
+#response:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+}
+
+.btn {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: var(--dark-color);
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    width: 100%;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 255, 157, 0.3);
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.feedback-section {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-top: 2rem;
+    border: 1px solid rgba(0, 255, 157, 0.2);
+}
+
+/* Loading Animation */
+.loading-questions {
+    text-align: center;
+    padding: 2rem;
+}
+
+.cyber-spinner {
+    width: 50px;
+    height: 50px;
+    margin: 1rem auto;
+    border: 3px solid transparent;
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Error Message Styling */
+.error-message {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255, 51, 102, 0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 51, 102, 0.3);
+}
+
