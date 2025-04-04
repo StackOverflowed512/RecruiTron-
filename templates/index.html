@@ -3,50 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Virtual Interviewer</title>
+    <title>RecruitTron - Next-Gen AI Interviewer</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
 </head>
 <body>
+    <div id="particles-js"></div>
     <div class="container">
-        <header>
-            <img src="/static/img/logo.png" alt="AI Interviewer Logo" class="logo">
-            <h1>AI Virtual Interviewer</h1>
-            <p>Practice your interview skills with our AI-powered interviewer</p>
+        <nav class="nav-bar">
+            <div class="logo-container">
+                <img src="/static/img/logo.png" alt="RecruitTron Logo" class="logo">
+                <span class="logo-text">RecruitTron</span>
+            </div>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#features">Features</a>
+                <a href="/leaderboard">Leaderboard</a>
+            </div>
+        </nav>
+
+        <header class="hero-section">
+            <div class="hero-content">
+                <h1 class="glitch" data-text="RecruitTron">RecruitTron</h1>
+                <p class="hero-subtitle">The Future of Technical Interviews</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">10K+</span>
+                        <span class="stat-label">Interviews</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">95%</span>
+                        <span class="stat-label">Accuracy</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label">Skills</span>
+                    </div>
+                </div>
+            </div>
         </header>
 
         <main>
-            <div class="upload-section">
-                <h2>Upload Your Resume</h2>
+            <section class="upload-section glassmorphism">
+                <h2>Begin Your Journey</h2>
+                <p class="section-subtitle">Upload your resume to start the next-gen interview experience</p>
                 <form id="resumeForm" enctype="multipart/form-data">
                     <div class="form-group">
                         <input type="file" id="resume" name="resume" accept=".pdf,.docx,.txt" required>
-                        <label for="resume">Choose file</label>
+                        <label for="resume" class="file-label">
+                            <span class="file-icon">📄</span>
+                            <span class="file-text">Choose your resume</span>
+                        </label>
                     </div>
-                    <button type="submit" class="btn">Start Interview</button>
+                    <button type="submit" class="btn-primary pulse">Launch Interview</button>
                 </form>
                 <div id="loading" class="loading" style="display: none;">
-                    <div class="spinner"></div>
-                    <p>Analyzing your resume...</p>
+                    <div class="cyber-spinner"></div>
+                    <p>Analyzing resume with quantum precision...</p>
                 </div>
-            </div>
+            </section>
 
-            <div class="features">
-                <div class="feature-card">
+            <section id="features" class="features-grid">
+                <div class="feature-card glassmorphism">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI-Powered Analysis</h3>
+                    <p>Advanced algorithms assess technical skills with precision</p>
+                </div>
+                <div class="feature-card glassmorphism">
+                    <div class="feature-icon">🎯</div>
                     <h3>Adaptive Questions</h3>
-                    <p>Questions adjust based on your responses</p>
+                    <p>Dynamic questioning based on real-time performance</p>
                 </div>
-                <div class="feature-card">
-                    <h3>Real-time Feedback</h3>
-                    <p>Get immediate analysis of your performance</p>
+                <div class="feature-card glassmorphism">
+                    <div class="feature-icon">📊</div>
+                    <h3>Real-time Metrics</h3>
+                    <p>Comprehensive analysis of technical and soft skills</p>
                 </div>
-                <div class="feature-card">
-                    <h3>Multi-modal Analysis</h3>
-                    <p>We analyze your speech, text, and facial expressions</p>
+                <div class="feature-card glassmorphism">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Global Ranking</h3>
+                    <p>Compare your performance with global participants</p>
                 </div>
-            </div>
+            </section>
         </main>
+
+        <footer class="footer">
+            <p>© 2024 RecruitTron | Revolutionizing Technical Interviews</p>
+        </footer>
     </div>
 
+    <script>
+        particlesJS.load('particles-js', '/static/js/particles-config.json', function() {
+            console.log('particles.js loaded');
+        });
+    </script>
     <script src="/static/js/main.js"></script>
 </body>
 </html>
