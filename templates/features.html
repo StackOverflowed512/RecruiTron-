@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecruitTron Features - Next-Gen AI Interviewer</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+</head>
+<body class="features-page">
+    <div id="particles-js"></div>
+    <div class="cyber-grid"></div>
+    
+    <nav class="nav-bar glass-nav">
+        <div class="logo-container">
+            <img src="/static/img/logo.png" alt="RecruitTron Logo" class="logo">
+            <span class="logo-text neon-text">RecruitTron</span>
+        </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/leaderboard">Leaderboard</a>
+        </div>
+    </nav>
+
+    <div class="features-container">
+        <h1 class="cyber-glitch" data-text="Revolutionary Features">Revolutionary Features</h1>
+        
+        <div class="features-grid-advanced">
+            <div class="feature-card-3d" data-tilt>
+                <div class="feature-icon">🤖</div>
+                <h3>AI-Powered Analysis</h3>
+                <p>Advanced machine learning algorithms analyze responses in real-time, providing instant feedback and scoring.</p>
+                <div class="feature-details">
+                    <ul>
+                        <li>Natural Language Processing</li>
+                        <li>Sentiment Analysis</li>
+                        <li>Technical Accuracy Scoring</li>
+                    </ul>
+                </div>
+                <div class="cyber-border"></div>
+            </div>
+
+            <div class="feature-card-3d" data-tilt>
+                <div class="feature-icon">🎯</div>
+                <h3>Adaptive Questioning</h3>
+                <p>Dynamic question generation based on candidate performance and response patterns.</p>
+                <div class="feature-details">
+                    <ul>
+                        <li>Difficulty Adjustment</li>
+                        <li>Skill-based Routing</li>
+                        <li>Performance Tracking</li>
+                    </ul>
+                </div>
+                <div class="cyber-border"></div>
+            </div>
+
+            <div class="feature-card-3d" data-tilt>
+                <div class="feature-icon">📊</div>
+                <h3>Comprehensive Analytics</h3>
+                <p>Detailed performance metrics and insights for both technical and soft skills.</p>
+                <div class="feature-details">
+                    <ul>
+                        <li>Technical Proficiency</li>
+                        <li>Communication Skills</li>
+                        <li>Problem-solving Ability</li>
+                    </ul>
+                </div>
+                <div class="cyber-border"></div>
+            </div>
+
+            <div class="feature-card-3d" data-tilt>
+                <div class="feature-icon">🎥</div>
+                <h3>Video Analysis</h3>
+                <p>Advanced video processing to analyze body language and confidence levels.</p>
+                <div class="feature-details">
+                    <ul>
+                        <li>Facial Expression Analysis</li>
+                        <li>Gesture Recognition</li>
+                        <li>Confidence Scoring</li>
+                    </ul>
+                </div>
+                <div class="cyber-border"></div>
+            </div>
+
+            <div class="feature-card-3d" data-tilt>
+                <div class="feature-icon">🔊</div>
+                <h3>Voice Analysis</h3>
+                <p>Real-time voice processing for communication skill assessment.</p>
+                <div class="feature-details">
+                    <ul>
+                        <li>Speech Clarity</li>
+                        <li>Tone Analysis</li>
+                        <li>Fluency Measurement</li>
+                    </ul>
+                </div>
+                <div class="cyber-border"></div>
+            </div>
+
+            <div class="feature-card-3d" data-tilt>
+                <div class="feature-icon">📈</div>
+                <h3>Performance Tracking</h3>
+                <p>Detailed progress tracking and comparison with global candidates.</p>
+                <div class="feature-details">
+                    <ul>
+                        <li>Global Rankings</li>
+                        <li>Progress Charts</li>
+                        <li>Skill Growth Analysis</li>
+                    </ul>
+                </div>
+                <div class="cyber-border"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+    <script>
+        VanillaTilt.init(document.querySelectorAll(".feature-card-3d"), {
+            max: 25,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.5,
+        });
+
+        particlesJS.load('particles-js', '/static/js/particles-config.json', function() {
+            console.log('particles.js loaded');
+        });
+    </script>
+</body>
+</html>

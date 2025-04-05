@@ -308,6 +308,10 @@ def analyze_response():
         print(f"Error analyzing response: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
+@app.route('/features')
+def features():
+    return render_template('features.html')
+
 @app.route('/feedback')
 def feedback():
     if 'final_score' not in session or 'overall_feedback' not in session:
