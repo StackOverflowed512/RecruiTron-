@@ -40,12 +40,39 @@ def index():
 def upload_resume():
     if 'resume' not in request.files:
         return jsonify({'error': 'No file part'}), 400
-    
+        
     file = request.files['resume']
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
-    
+        
     if file:
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+        
+        try:
+            # Use the global resume_analyzer instance
+            analysis = resume_analyzer.analyze_resume(file_path)
+            questions = resume_analyzer.generate_questions(analysis)
+            
+            # Store complete analysis in session
+            session['resume_analysis'] = analysis
+            session['current_questions'] = questions
+            session['role'] = analysis.get('role', 'Software Developer')
+            session['skills'] = analysis.get('skills', {}).get('technical_skills', [])
+            session['experience_level'] = analysis.get('experience_level', 'mid')
+            
+            return jsonify({
+                'success': True,
+                'redirect': '/interview'  # Add redirect URL
+            })
+            
+        except Exception as e:
+            print(f"Error processing resume: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+        finally:
+            if os.path.exists(file_path):
+                os.remove(file_path)
         # Create unique session ID for this interview
         session_id = str(uuid.uuid4())
         session['session_id'] = session_id

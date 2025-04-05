@@ -709,186 +709,153 @@ body.torch-effect {
     left: 0;
 }
 
-/* Features Page Specific Styles */
-/* Add these new styles for the features page */
-
-.features-page {
+/* Update Feedback Page Styles */
+.feedback-page {
     background: linear-gradient(135deg, #0a0a2e 0%, #1a1a3a 100%);
     min-height: 100vh;
+    position: relative;
+    overflow-y: auto;
     overflow-x: hidden;
+    perspective: 1000px;
 }
 
-.neon-lines {
+.feedback-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    position: relative;
+    z-index: 2;
+    height: auto;
+}
+
+/* Enhanced Score Dashboard */
+.score-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2.5rem;
+    margin: 3rem 0;
+}
+
+.score-chart-container {
+    min-height: 400px;
+    padding: 2rem;
+    background: rgba(13, 13, 23, 0.7);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 255, 157, 0.2);
+    box-shadow: 
+        0 0 30px rgba(0, 255, 157, 0.1),
+        inset 0 0 20px rgba(0, 255, 157, 0.05);
+    transform-style: preserve-3d;
+    transition: all 0.4s ease;
+}
+
+.score-chart-container:hover {
+    transform: translateY(-5px) scale(1.02);
+    border-color: rgba(0, 255, 157, 0.4);
+}
+
+/* Performance Metrics Grid */
+.performance-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.metric-card {
+    background: rgba(13, 13, 23, 0.7);
+    padding: 2rem;
+    border-radius: 15px;
+    border: 1px solid rgba(0, 255, 157, 0.1);
+    transition: all 0.4s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(0, 255, 157, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 255, 157, 0.15);
+}
+
+/* Feedback Sections */
+.feedback-section {
+    background: rgba(13, 13, 23, 0.7);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin: 2rem 0;
+    border: 1px solid rgba(0, 255, 157, 0.1);
+    transition: all 0.3s ease;
+}
+
+.feedback-point {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1.5rem;
+    margin: 1rem 0;
+    border-radius: 12px;
+    border-left: 4px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.feedback-point:hover {
+    transform: translateX(10px);
+    background: rgba(0, 255, 157, 0.05);
+}
+
+/* Responsive Design Improvements */
+@media (max-width: 768px) {
+    .feedback-container {
+        padding: 2rem 1rem;
+    }
+
+    .score-dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .score-chart-container {
+        min-height: 300px;
+    }
+
+    .cyber-glitch {
+        font-size: 2.5rem;
+    }
+}
+
+/* Scrollbar Styling */
+.feedback-page::-webkit-scrollbar {
+    width: 10px;
+}
+
+.feedback-page::-webkit-scrollbar-track {
+    background: rgba(13, 13, 23, 0.7);
+}
+
+.feedback-page::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 5px;
+    border: 2px solid rgba(13, 13, 23, 0.7);
+}
+
+.feedback-page::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+.cyber-grid {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
-    z-index: 1;
     background: 
-        linear-gradient(90deg, transparent 0%, var(--primary-color) 50%, transparent 100%) 0 0 / 200% 1px,
-        linear-gradient(180deg, transparent 0%, var(--primary-color) 50%, transparent 100%) 0 0 / 1px 200%;
-    opacity: 0.1;
-    animation: neonGrid 20s linear infinite;
+        linear-gradient(90deg, rgba(0, 255, 157, 0.03) 1px, transparent 1px) 0 0 / 50px 50px,
+        linear-gradient(0deg, rgba(0, 255, 157, 0.03) 1px, transparent 1px) 0 0 / 50px 50px;
+    pointer-events: none;
+    animation: gridMove 20s linear infinite;
 }
 
-.features-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 4rem 2rem;
-    position: relative;
-    z-index: 2;
-}
-
-.mega-title {
-    font-size: 4.5rem;
-    text-align: center;
-    margin-bottom: 4rem;
-    background: linear-gradient(135deg, var(--primary-color), #00ffff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: titleFloat 3s ease-in-out infinite;
-    text-shadow: 
-        0 0 20px rgba(0, 255, 157, 0.5),
-        0 0 40px rgba(0, 255, 157, 0.3),
-        0 0 60px rgba(0, 255, 157, 0.1);
-}
-
-.features-grid-advanced {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 3rem;
-    perspective: 1000px;
-}
-
-.feature-card-3d {
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 20px;
-    padding: 2rem;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 255, 157, 0.1);
-    transform-style: preserve-3d;
-}
-
-.feature-hologram {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at 50% -20%, 
-        rgba(0, 255, 157, 0.1) 0%,
-        rgba(0, 255, 157, 0.05) 40%,
-        transparent 60%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.feature-card-3d:hover .feature-hologram {
-    opacity: 1;
-    animation: hologramPulse 2s ease-in-out infinite;
-}
-
-.feature-content {
-    position: relative;
-    z-index: 2;
-}
-
-.feature-icon {
-    font-size: 3rem;
-    margin-bottom: 1.5rem;
-    transform: translateZ(30px);
-}
-
-.feature-card-3d h3 {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-    color: var(--primary-color);
-    transform: translateZ(20px);
-}
-
-.feature-list {
-    list-style: none;
-    padding: 0;
-    margin: 1.5rem 0;
-}
-
-.feature-list li {
-    padding: 0.5rem 0;
-    color: rgba(255, 255, 255, 0.8);
-    transform: translateZ(15px);
-    transition: color 0.3s ease;
-}
-
-.feature-list li:hover {
-    color: var(--primary-color);
-}
-
-.cyber-border {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        var(--primary-color) 50%, 
-        transparent 100%);
-    animation: borderFlow 2s linear infinite;
-}
-
-@keyframes neonGrid {
-    0% { background-position: 0 0; }
-    100% { background-position: 200% 200%; }
-}
-
-@keyframes titleFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-
-@keyframes hologramPulse {
-    0%, 100% { opacity: 0.5; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.05); }
-}
-
-@keyframes borderFlow {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-
-.nav-link {
-    position: relative;
-    overflow: hidden;
-    padding: 0.5rem 1rem;
-}
-
-.nav-link::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 2px;
-    background: var(--primary-color);
-    transition: left 0.3s ease;
-}
-
-.nav-link:hover::before {
-    left: 0;
-}
-
-@media (max-width: 768px) {
-    .mega-title {
-        font-size: 2.5rem;
+@keyframes gridMove {
+    0% {
+        transform: translateY(0);
     }
-    
-    .features-grid-advanced {
-        grid-template-columns: 1fr;
+    100% {
+        transform: translateY(50px);
     }
 }

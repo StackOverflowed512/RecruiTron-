@@ -278,3 +278,36 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('Failed to load interview questions. Please refresh the page.');
     });
 });
+
+document.getElementById('resumeForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const submitButton = document.querySelector('.btn-primary');
+    const loadingDiv = document.getElementById('loading');
+    
+    // Show loading state
+    submitButton.disabled = true;
+    loadingDiv.style.display = 'block';
+    
+    try {
+        const response = await fetch('/upload_resume', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.redirect) {
+            window.location.href = data.redirect;
+        } else if (data.error) {
+            alert(data.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while processing your resume');
+    } finally {
+        submitButton.disabled = false;
+        loadingDiv.style.display = 'none';
+    }
+});

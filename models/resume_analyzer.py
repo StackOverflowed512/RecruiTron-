@@ -7,27 +7,8 @@ import os
 from typing import Dict, List, Union
 
 class ResumeAnalyzer:
-    def __init__(self, gemini_model=None):
-        self.model = gemini_model
-        # Load spaCy model
-        try:
-            self.nlp = spacy.load("en_core_web_sm")
-        except:
-            # If model not found, download it
-            import subprocess
-            subprocess.call(['python', '-m', 'spacy', 'download', 'en_core_web_sm'])
-            self.nlp = spacy.load("en_core_web_sm")
-            
-        # Define common job roles and related keywords
-        self.role_keywords = {
-            "Software Engineer": ["software engineer", "developer", "programmer", "coder", "software development"],
-            "Data Scientist": ["data scientist", "data analyst", "machine learning", "deep learning", "AI"],
-            "UX/UI Designer": ["ux", "ui", "user experience", "user interface", "designer"],
-            "Product Manager": ["product manager", "product owner", "program manager", "scrum master"],
-            "DevOps Engineer": ["devops", "cloud", "aws", "azure", "gcp", "kubernetes"],
-            "Financial Analyst": ["financial", "finance", "accounting", "analyst", "investment"],
-            "HR Specialist": ["hr", "human resources", "recruiting", "talent", "acquisition"]
-        }
+    def __init__(self, model):
+        self.model = model
 
     def extract_text(self, file_path: str) -> str:
         """Extract text from resume file (PDF or DOCX)"""
@@ -42,6 +23,111 @@ class ResumeAnalyzer:
             for para in doc.paragraphs:
                 text += para.text + "\n"
         return text
+
+    def analyze_resume(self, file_path: str) -> Dict:
+        """Complete resume analysis"""
+        resume_text = self.extract_text(file_path)
+        
+        prompt = f"""
+        Analyze this resume in detail and extract all relevant information.
+        
+        Resume Text:
+        {resume_text}
+        
+        Provide a detailed analysis in JSON format with the following structure:
+        {{
+            "personal_info": {{
+                "name": "candidate name",
+                "email": "email if present",
+                "location": "location if present"
+            }},
+            "professional_summary": "detailed summary of career",
+            "role": "current or target role",
+            "experience_level": "entry/mid/senior",
+            "years_of_experience": number,
+            "skills": {{
+                "technical_skills": ["list of technical skills"],
+                "frameworks": ["list of frameworks"],
+                "tools": ["list of tools"],
+                "soft_skills": ["list of soft skills"]
+            }},
+            "experience": [
+                {{
+                    "title": "job title",
+                    "company": "company name",
+                    "duration": "duration",
+                    "responsibilities": ["key responsibilities"],
+                    "technologies": ["technologies used"]
+                }}
+            ],
+            "education": [
+                {{
+                    "degree": "degree name",
+                    "institution": "institution name",
+                    "year": "completion year"
+                }}
+            ],
+            "projects": [
+                {{
+                    "name": "project name",
+                    "description": "brief description",
+                    "technologies": ["technologies used"]
+                }}
+            ]
+        }}
+        """
+        
+        try:
+            response = self.model.generate_content(prompt)
+            analysis = json.loads(response.text)
+            return analysis
+        except Exception as e:
+            print(f"Error analyzing resume: {e}")
+            return {}
+
+    def generate_questions(self, analysis: Dict) -> List[Dict]:
+        """Generate tailored interview questions based on complete analysis"""
+        prompt = f"""
+        You are an expert technical interviewer. Generate detailed technical interview questions based on this candidate's profile:
+
+        Role: {analysis.get('role', 'Software Developer')}
+        Experience: {analysis.get('years_of_experience', 0)} years
+        Technical Skills: {', '.join(analysis.get('skills', {}).get('technical_skills', []))}
+        Projects: {json.dumps(analysis.get('projects', []))}
+        Experience: {json.dumps(analysis.get('experience', []))}
+
+        Generate 5 technical questions that:
+        1. Test their strongest technical skill
+        2. Validate their project experience
+        3. Challenge their problem-solving abilities
+        4. Assess their system design knowledge
+        5. Evaluate their best practices understanding
+
+        For each question:
+        1. Make it specific to their background
+        2. Reference their actual projects or experience
+        3. Focus on technologies they've used
+        4. Include follow-up points to probe deeper
+
+        Return as JSON array with objects containing:
+        {{
+            "question": "detailed question text",
+            "context": "why this question is relevant to their background",
+            "expected_points": ["key points to look for in answer"],
+            "follow_ups": ["follow-up questions"],
+            "difficulty": "easy/medium/hard",
+            "category": "technical/design/problem-solving",
+            "related_skills": ["skills being tested"]
+        }}
+        """
+
+        try:
+            response = self.model.generate_content(prompt)
+            questions = json.loads(response.text)
+            return questions
+        except Exception as e:
+            print(f"Error generating questions: {e}")
+            return []
 
     def extract_role_info(self, file_path: str) -> Dict:
         """Extract role information from resume"""
