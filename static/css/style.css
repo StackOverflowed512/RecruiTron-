@@ -654,3 +654,60 @@ body.torch-effect {
         padding: 1rem 2rem;
     }
 }
+
+.performance-analysis {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 2rem 0;
+    border: 1px solid rgba(0, 255, 157, 0.1);
+}
+
+.chart-container {
+    height: 300px;
+    margin: 2rem 0;
+}
+
+.ai-feedback {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 2rem 0;
+    border: 1px solid rgba(0, 255, 157, 0.1);
+}
+
+.feedback-content {
+    display: grid;
+    gap: 2rem;
+}
+
+.feedback-section {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.feedback-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.feedback-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.feedback-section li {
+    margin: 0.8rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.feedback-section li::before {
+    content: '→';
+    color: var(--primary-color);
+    position: absolute;
+    left: 0;
+}

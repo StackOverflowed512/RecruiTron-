@@ -150,17 +150,19 @@ function submitAnswer() {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            displayFeedback(data.feedback);
-            displayScore(data.score);
-            
             if (data.is_final) {
-                showFinalScore(data.final_score);
+                window.location.href = '/feedback';
             } else {
+                if (data.score) {
+                    displayScore(data.score);
+                    displayFeedback(data.feedback);
+                }
+                
                 setTimeout(() => {
                     currentQuestionIndex++;
                     displayCurrentQuestion();
                     document.getElementById('response').value = '';
-                    clearFeedback();
+                    clearFeedbackDisplay();
                 }, 3000);
             }
         } else {
@@ -177,7 +179,45 @@ function submitAnswer() {
     });
 }
 
+function displayScore(score) {
+    if (!score) return;
+    
+    const scoreElement = document.getElementById('score');
+    scoreElement.style.display = 'block';
+    scoreElement.innerHTML = `
+        <div class="score-details">
+            <h3>Score Breakdown:</h3>
+            <div class="score-item">
+                <label>Technical Understanding:</label>
+                <div class="score-bar">
+                    <div class="score-fill" style="width: ${score.technical_score || 0}%"></div>
+                </div>
+                <span>${score.technical_score || 0}%</span>
+            </div>
+            <div class="score-item">
+                <label>Communication:</label>
+                <div class="score-bar">
+                    <div class="score-fill" style="width: ${score.communication_score || 0}%"></div>
+                </div>
+                <span>${score.communication_score || 0}%</span>
+            </div>
+            <div class="score-item">
+                <label>Confidence:</label>
+                <div class="score-bar">
+                    <div class="score-fill" style="width: ${score.confidence_score || 0}%"></div>
+                </div>
+                <span>${score.confidence_score || 0}%</span>
+            </div>
+            <div class="score-total">
+                <h4>Total Score: ${score.total_score || 0}%</h4>
+            </div>
+        </div>
+    `;
+}
+
 function displayFeedback(feedback) {
+    if (!feedback) return;
+    
     const feedbackElement = document.getElementById('feedback');
     feedbackElement.style.display = 'block';
     feedbackElement.innerHTML = `
@@ -188,76 +228,53 @@ function displayFeedback(feedback) {
     `;
 }
 
-function displayScore(score) {
+function clearFeedbackDisplay() {
     const scoreElement = document.getElementById('score');
-    scoreElement.style.display = 'block';
-    scoreElement.innerHTML = `
-        <div class="score-details">
-            <h3>Score Breakdown:</h3>
-            <div class="score-item">
-                <label>Technical Understanding:</label>
-                <div class="score-bar">
-                    <div class="score-fill" style="width: ${score.technical_score}%"></div>
-                </div>
-                <span>${score.technical_score}%</span>
-            </div>
-            <div class="score-item">
-                <label>Communication:</label>
-                <div class="score-bar">
-                    <div class="score-fill" style="width: ${score.communication_score}%"></div>
-                </div>
-                <span>${score.communication_score}%</span>
-            </div>
-            <div class="score-item">
-                <label>Confidence:</label>
-                <div class="score-bar">
-                    <div class="score-fill" style="width: ${score.confidence_score}%"></div>
-                </div>
-                <span>${score.confidence_score}%</span>
-            </div>
-            <div class="score-total">
-                <h4>Total Score: ${score.total_score}%</h4>
-            </div>
-        </div>
-    `;
+    const feedbackElement = document.getElementById('feedback');
+    
+    if (scoreElement) {
+        scoreElement.style.display = 'none';
+        scoreElement.innerHTML = '';
+    }
+    
+    if (feedbackElement) {
+        feedbackElement.style.display = 'none';
+        feedbackElement.innerHTML = '';
+    }
 }
 
-function showFinalScore(finalScore) {
-    const container = document.querySelector('.question-section');
-    container.innerHTML = `
-        <h2>Interview Complete!</h2>
-        <div class="final-score">
-            <div class="score-circle">
-                <h3>Final Score: ${finalScore.total_score.toFixed(1)}%</h3>
-            </div>
-            <div class="score-breakdown">
-                <h3>Performance Breakdown:</h3>
-                <div class="score-item">
-                    <label>Technical Knowledge:</label>
-                    <div class="score-bar">
-                        <div class="score-fill" style="width: ${finalScore.technical_score}%"></div>
-                    </div>
-                    <span>${finalScore.technical_score.toFixed(1)}%</span>
-                </div>
-                <div class="score-item">
-                    <label>Communication Skills:</label>
-                    <div class="score-bar">
-                        <div class="score-fill" style="width: ${finalScore.communication_score}%"></div>
-                    </div>
-                    <span>${finalScore.communication_score.toFixed(1)}%</span>
-                </div>
-                <div class="score-item">
-                    <label>Overall Performance:</label>
-                    <div class="score-bar">
-                        <div class="score-fill" style="width: ${finalScore.overall_score}%"></div>
-                    </div>
-                    <span>${finalScore.overall_score.toFixed(1)}%</span>
-                </div>
-            </div>
-        </div>
-        <a href="/feedback" class="btn">View Detailed Feedback</a>
-    `;
+function displayCurrentQuestion() {
+    const questionElement = document.getElementById('question');
+    const progressText = document.getElementById('progressText');
+    const progressBar = document.querySelector('.progress');
+    
+    if (currentQuestionIndex < questions.length) {
+        questionElement.textContent = questions[currentQuestionIndex];
+        progressText.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+        progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+    }
 }
 
-// Initialize when page loads
-document.addEventListener('DOMContentLoaded', initInterviewPage);
+// Initialize questions when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/get_questions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success && data.questions) {
+            questions = data.questions;
+            displayCurrentQuestion();
+        } else {
+            throw new Error(data.error || 'Failed to get questions');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to load interview questions. Please refresh the page.');
+    });
+});

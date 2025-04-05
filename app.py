@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, redirect
 import os
 import json
-import re  # Add this import
+import re
 from werkzeug.utils import secure_filename
 from models.resume_analyzer import ResumeAnalyzer
 from models.sentiment_analyzer import SentimentAnalyzer
@@ -207,6 +207,7 @@ def analyze_response():
         data = request.json
         question = data.get('question', '')
         response = data.get('response', '')
+        is_final = len(session.get('answers', [])) >= 4  # Check if this is the last question
         
         # Generate analysis prompt for Gemini
         prompt = f"""
@@ -226,11 +227,6 @@ def analyze_response():
                 "specific feedback point 3"
             ]
         }}
-        
-        Base the scores on:
-        - Technical accuracy and depth
-        - Communication clarity
-        - Confidence in delivery
         """
         
         # Get Gemini's analysis
@@ -245,12 +241,7 @@ def analyze_response():
         
         analysis = json.loads(response_text)
         
-        # Validate analysis format
-        required_keys = ['technical_score', 'communication_score', 'confidence_score', 'total_score', 'feedback']
-        if not all(key in analysis for key in required_keys):
-            raise ValueError("Invalid response format from Gemini")
-        
-        # Store the response and score
+        # Store the answer and analysis
         answers = session.get('answers', [])
         answers.append({
             'question': question,
@@ -259,61 +250,81 @@ def analyze_response():
         })
         session['answers'] = answers
         
-        # Check if this was the last question
-        current_questions = session.get('current_questions', [])
-        is_final = len(answers) >= len(current_questions)
-        
         if is_final:
-            # Calculate final score
-            scores = [ans['score']['total_score'] for ans in answers]
-            final_score = {
-                'total_score': sum(scores) / len(scores),
+            # Calculate final scores
+            final_scores = {
                 'technical_score': sum(ans['score']['technical_score'] for ans in answers) / len(answers),
                 'communication_score': sum(ans['score']['communication_score'] for ans in answers) / len(answers),
-                'overall_score': sum(scores) / len(scores)
+                'confidence_score': sum(ans['score']['confidence_score'] for ans in answers) / len(answers),
+                'total_score': sum(ans['score']['total_score'] for ans in answers) / len(answers)
             }
-            session['final_score'] = final_score
+            
+            # Generate overall feedback
+            feedback_prompt = f"""
+            Review these interview responses and provide comprehensive feedback:
+            
+            Questions and Answers: {json.dumps(answers, indent=2)}
+            
+            Provide feedback in this JSON format:
+            {{
+                "overall_assessment": "detailed assessment of overall performance",
+                "strengths": ["strength1", "strength2", "strength3"],
+                "areas_for_improvement": ["area1", "area2", "area3"],
+                "recommendations": ["recommendation1", "recommendation2", "recommendation3"]
+            }}
+            """
+            
+            feedback_response = model.generate_content(feedback_prompt)
+            feedback_text = feedback_response.text.strip()
+            
+            # Clean and parse feedback JSON
+            feedback_match = re.search(r'\{.*\}', feedback_text, re.DOTALL)
+            if feedback_match:
+                feedback_text = feedback_match.group()
+            
+            overall_feedback = json.loads(feedback_text)
+            
+            # Store in session
+            session['final_score'] = final_scores
+            session['overall_feedback'] = overall_feedback
+            
+            return jsonify({
+                'success': True,
+                'is_final': True,
+                'redirect': '/feedback'
+            })
         
         return jsonify({
             'success': True,
+            'is_final': False,
             'score': analysis,
-            'feedback': analysis['feedback'],
-            'is_final': is_final,
-            'final_score': final_score if is_final else None
+            'feedback': analysis['feedback']
         })
         
     except Exception as e:
         print(f"Error analyzing response: {e}")
-        print(f"Response text: {response_text if 'response_text' in locals() else 'Not available'}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/get_final_score')
-def get_final_score():
+@app.route('/feedback')
+def feedback():
+    if 'final_score' not in session or 'overall_feedback' not in session:
+        return redirect('/')
+    return render_template('feedback.html')
+
+@app.route('/get_final_feedback')
+def get_final_feedback():
     try:
-        final_score = session.get('final_score')
-        answers = session.get('answers', [])
-        
-        if not final_score:
-            final_score = score_calculator.calculate_final_score({
-                'questions': answers
-            })
-            session['final_score'] = final_score
-        
+        if 'final_score' not in session or 'overall_feedback' not in session:
+            return jsonify({'success': False, 'error': 'No feedback available'}), 404
+            
         return jsonify({
             'success': True,
-            'score': final_score,
-            'answers': answers
+            'final_score': session['final_score'],
+            'overall_feedback': session['overall_feedback']
         })
-        
     except Exception as e:
-        print(f"Error getting final score: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        print(f"Error getting final feedback: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
     video_data = data.get('videoData', '')
     audio_data = data.get('audioData', '')
     
@@ -395,10 +406,6 @@ def submit_interview():
         'redirect': '/feedback',
         'score': final_score
     })
-
-@app.route('/feedback')
-def feedback():
-    return render_template('feedback.html')
 
 @app.route('/leaderboard')
 def leaderboard():
