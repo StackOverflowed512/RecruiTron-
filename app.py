@@ -209,23 +209,20 @@ def analyze_response():
         response = data.get('response', '')
         is_final = len(session.get('answers', [])) >= 4  # Check if this is the last question
         
-        # Generate analysis prompt for Gemini
+        # Define the analysis prompt
         prompt = f"""
-        Analyze this interview response for a technical interview.
-        Question: {question}
-        Answer: {response}
+        Analyze this technical interview response and provide scores and feedback.
         
-        Provide evaluation in this exact JSON format:
+        Question: {question}
+        Response: {response}
+        
+        Return the analysis as a JSON object with this exact structure:
         {{
-            "technical_score": <score between 0-100>,
-            "communication_score": <score between 0-100>,
-            "confidence_score": <score between 0-100>,
-            "total_score": <average of all scores>,
-            "feedback": [
-                "specific feedback point 1",
-                "specific feedback point 2",
-                "specific feedback point 3"
-            ]
+            "technical_score": <0-100>,
+            "communication_score": <0-100>,
+            "confidence_score": <0-100>,
+            "total_score": <0-100>,
+            "feedback": ["point1", "point2", "point3"]
         }}
         """
         
@@ -234,19 +231,21 @@ def analyze_response():
         response_text = gemini_response.text.strip()
         
         # Clean and parse JSON response
-        import re
         json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
         if json_match:
             response_text = json_match.group()
         
         analysis = json.loads(response_text)
         
-        # Store the answer and analysis
+        # Store only essential data
         answers = session.get('answers', [])
         answers.append({
-            'question': question,
-            'response': response,
-            'score': analysis
+            'score': {
+                'technical_score': analysis['technical_score'],
+                'communication_score': analysis['communication_score'],
+                'confidence_score': analysis['confidence_score'],
+                'total_score': analysis['total_score']
+            }
         })
         session['answers'] = answers
         
@@ -259,34 +258,38 @@ def analyze_response():
                 'total_score': sum(ans['score']['total_score'] for ans in answers) / len(answers)
             }
             
-            # Generate overall feedback
+            # Define feedback prompt for final analysis
             feedback_prompt = f"""
-            Review these interview responses and provide comprehensive feedback:
-            
-            Questions and Answers: {json.dumps(answers, indent=2)}
-            
-            Provide feedback in this JSON format:
+            Analyze the overall interview performance with these scores:
+            Technical: {final_scores['technical_score']:.1f}%
+            Communication: {final_scores['communication_score']:.1f}%
+            Confidence: {final_scores['confidence_score']:.1f}%
+            Overall: {final_scores['total_score']:.1f}%
+
+            Return a JSON object with this structure:
             {{
-                "overall_assessment": "detailed assessment of overall performance",
                 "strengths": ["strength1", "strength2", "strength3"],
                 "areas_for_improvement": ["area1", "area2", "area3"],
-                "recommendations": ["recommendation1", "recommendation2", "recommendation3"]
+                "recommendations": ["rec1", "rec2", "rec3"]
             }}
             """
             
             feedback_response = model.generate_content(feedback_prompt)
             feedback_text = feedback_response.text.strip()
             
-            # Clean and parse feedback JSON
             feedback_match = re.search(r'\{.*\}', feedback_text, re.DOTALL)
             if feedback_match:
                 feedback_text = feedback_match.group()
             
             overall_feedback = json.loads(feedback_text)
             
-            # Store in session
+            # Store minimal feedback data
             session['final_score'] = final_scores
-            session['overall_feedback'] = overall_feedback
+            session['overall_feedback'] = {
+                'strengths': overall_feedback.get('strengths', [])[:3],
+                'areas_for_improvement': overall_feedback.get('areas_for_improvement', [])[:3],
+                'recommendations': overall_feedback.get('recommendations', [])[:3]
+            }
             
             return jsonify({
                 'success': True,
@@ -298,7 +301,7 @@ def analyze_response():
             'success': True,
             'is_final': False,
             'score': analysis,
-            'feedback': analysis['feedback']
+            'feedback': analysis['feedback'][:3]  # Limit feedback points
         })
         
     except Exception as e:
