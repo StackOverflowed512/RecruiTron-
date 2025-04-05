@@ -3,68 +3,57 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                displayPerformanceChart(data.final_score);
-                displayAIFeedback(data.overall_feedback);
+                updateScoreChart(data.final_score);
+                updateTotalScore(data.final_score.total_score);
+                displayFeedback(data.overall_feedback);
             }
         })
         .catch(error => console.error('Error:', error));
 });
 
-function displayPerformanceChart(scores) {
-    const ctx = document.getElementById('performanceChart').getContext('2d');
+function updateScoreChart(scores) {
+    const ctx = document.getElementById('scoreChart').getContext('2d');
     new Chart(ctx, {
-        type: 'bar',
+        type: 'radar',
         data: {
-            labels: ['Technical Knowledge', 'Communication', 'Confidence', 'Overall Score'],
+            labels: ['Technical', 'Communication', 'Confidence'],
             datasets: [{
-                label: 'Performance Scores',
+                label: 'Score Breakdown',
                 data: [
                     scores.technical_score,
                     scores.communication_score,
-                    scores.confidence_score,
-                    scores.total_score
+                    scores.confidence_score
                 ],
-                backgroundColor: [
-                    'rgba(0, 255, 157, 0.5)',
-                    'rgba(108, 99, 255, 0.5)',
-                    'rgba(255, 51, 102, 0.5)',
-                    'rgba(255, 206, 86, 0.5)'
-                ],
-                borderColor: [
-                    'rgba(0, 255, 157, 1)',
-                    'rgba(108, 99, 255, 1)',
-                    'rgba(255, 51, 102, 1)',
-                    'rgba(255, 206, 86, 1)'
-                ],
-                borderWidth: 2
+                backgroundColor: 'rgba(0, 255, 157, 0.2)',
+                borderColor: 'rgba(0, 255, 157, 1)',
+                pointBackgroundColor: 'rgba(0, 255, 157, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(0, 255, 157, 1)'
             }]
         },
         options: {
-            responsive: true,
             scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
+                r: {
+                    angleLines: {
+                        color: 'rgba(255, 255, 255, 0.2)'
+                    },
                     grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
+                        color: 'rgba(255, 255, 255, 0.2)'
+                    },
+                    pointLabels: {
+                        color: 'rgba(255, 255, 255, 0.8)'
                     },
                     ticks: {
-                        color: '#fff'
-                    }
-                },
-                x: {
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
-                    },
-                    ticks: {
-                        color: '#fff'
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        backdropColor: 'transparent'
                     }
                 }
             },
             plugins: {
                 legend: {
                     labels: {
-                        color: '#fff'
+                        color: 'rgba(255, 255, 255, 0.8)'
                     }
                 }
             }
@@ -72,27 +61,41 @@ function displayPerformanceChart(scores) {
     });
 }
 
-function displayAIFeedback(feedback) {
-    document.getElementById('overallAssessment').textContent = feedback.overall_assessment;
+function updateTotalScore(score) {
+    const circle = document.querySelector('.score-circle');
+    const scoreText = document.querySelector('.total-score');
+    const circumference = 2 * Math.PI * 60;
+    const offset = circumference - (score / 100) * circumference;
     
-    const strengthsList = document.getElementById('strengths');
-    feedback.strengths.forEach(strength => {
-        const li = document.createElement('li');
-        li.textContent = strength;
-        strengthsList.appendChild(li);
-    });
+    circle.style.strokeDashoffset = offset;
     
-    const improvementsList = document.getElementById('improvements');
-    feedback.areas_for_improvement.forEach(area => {
-        const li = document.createElement('li');
-        li.textContent = area;
-        improvementsList.appendChild(li);
-    });
+    let currentScore = 0;
+    const duration = 2000;
+    const increment = score / (duration / 16);
     
-    const recommendationsList = document.getElementById('recommendations');
-    feedback.recommendations.forEach(rec => {
-        const li = document.createElement('li');
-        li.textContent = rec;
-        recommendationsList.appendChild(li);
-    });
+    const animation = setInterval(() => {
+        currentScore += increment;
+        if (currentScore >= score) {
+            currentScore = score;
+            clearInterval(animation);
+        }
+        scoreText.textContent = Math.round(currentScore);
+    }, 16);
+}
+
+function displayFeedback(feedback) {
+    const lists = {
+        'strengthsList': feedback.strengths,
+        'improvementsList': feedback.areas_for_improvement,
+        'recommendationsList': feedback.recommendations
+    };
+
+    for (const [listId, items] of Object.entries(lists)) {
+        const list = document.getElementById(listId);
+        list.innerHTML = items.map(item => `
+            <li class="feedback-item">
+                ${item}
+            </li>
+        `).join('');
+    }
 }

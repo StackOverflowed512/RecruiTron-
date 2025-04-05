@@ -3,52 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interview Feedback</title>
+    <title>Interview Feedback - RecruitTron</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
 </head>
-<body>
+<body class="feedback-page">
+    <div id="particles-js"></div>
+    <div class="cyber-grid"></div>
+
     <div class="feedback-container">
-        <header>
-            <h1>Your Interview Results</h1>
-            <p>Here's how you performed in your AI-powered interview</p>
-        </header>
-
-        <div class="performance-analysis">
-            <h2>Performance Analysis</h2>
-            <div class="chart-container">
-                <canvas id="performanceChart"></canvas>
+        <h1 class="cyber-glitch" data-text="Interview Analysis">Interview Analysis</h1>
+        
+        <div class="score-dashboard">
+            <div class="score-chart-container">
+                <canvas id="scoreChart"></canvas>
             </div>
-        </div>
-
-        <div class="ai-feedback">
-            <h2>AI Analysis & Recommendations</h2>
-            <div class="feedback-content">
-                <div class="feedback-section">
-                    <h3>Overall Assessment</h3>
-                    <p id="overallAssessment"></p>
-                </div>
-                <div class="feedback-section">
-                    <h3>Key Strengths</h3>
-                    <ul id="strengths"></ul>
-                </div>
-                <div class="feedback-section">
-                    <h3>Areas for Improvement</h3>
-                    <ul id="improvements"></ul>
-                </div>
-                <div class="feedback-section">
-                    <h3>Recommendations</h3>
-                    <ul id="recommendations"></ul>
+            
+            <div class="overall-score">
+                <div class="score-ring">
+                    <svg>
+                        <circle class="score-circle-bg" cx="70" cy="70" r="60"></circle>
+                        <circle class="score-circle" cx="70" cy="70" r="60"></circle>
+                    </svg>
+                    <div class="score-text">
+                        <span class="total-score">0</span>
+                        <span class="score-label">Total Score</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="actions">
-            <button class="btn" onclick="window.location.href='/leaderboard'">View Leaderboard</button>
-            <button class="btn primary" onclick="window.location.href='/'">Start New Interview</button>
+        <div class="feedback-grid">
+            <div class="feedback-card strengths">
+                <h3>Key Strengths</h3>
+                <div class="cyber-list" id="strengthsList"></div>
+            </div>
+
+            <div class="feedback-card improvements">
+                <h3>Areas for Improvement</h3>
+                <div class="cyber-list" id="improvementsList"></div>
+            </div>
+
+            <div class="feedback-card recommendations">
+                <h3>Recommendations</h3>
+                <div class="cyber-list" id="recommendationsList"></div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="cyber-button" onclick="window.location.href='/'">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                Start New Interview
+            </button>
+            <button class="cyber-button" onclick="window.location.href='/leaderboard'">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                View Leaderboard
+            </button>
         </div>
     </div>
 
     <script src="/static/js/feedback.js"></script>
+    <script>
+        particlesJS.load('particles-js', '/static/js/particles-config.json', function() {
+            console.log('particles.js loaded');
+        });
+    </script>
 </body>
 </html>
