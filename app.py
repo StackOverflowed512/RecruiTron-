@@ -23,9 +23,7 @@ app.secret_key = os.urandom(24)
 app.config['UPLOAD_FOLDER'] = 'uploads/'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 
 
-
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
 
 resume_analyzer = ResumeAnalyzer(model)
 sentiment_analyzer = SentimentAnalyzer(model)
@@ -46,25 +44,29 @@ def upload_resume():
         return jsonify({'error': 'No selected file'}), 400
         
     if file:
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(file_path)
-        
         try:
-            # Use the global resume_analyzer instance
+            # Save file temporarily
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            
+            # Analyze resume
             analysis = resume_analyzer.analyze_resume(file_path)
-            questions = resume_analyzer.generate_questions(analysis)
+            resume_text = resume_analyzer.extract_text(file_path)
             
             # Store complete analysis in session
             session['resume_analysis'] = analysis
-            session['current_questions'] = questions
+            session['resume_text'] = resume_text
             session['role'] = analysis.get('role', 'Software Developer')
+            session['domain'] = analysis.get('domain', 'General')
             session['skills'] = analysis.get('skills', {}).get('technical_skills', [])
             session['experience_level'] = analysis.get('experience_level', 'mid')
+            session['projects'] = analysis.get('projects', [])
+            session['experience'] = analysis.get('experience', [])
             
             return jsonify({
                 'success': True,
-                'redirect': '/interview'  # Add redirect URL
+                'redirect': '/interview'
             })
             
         except Exception as e:
@@ -73,34 +75,99 @@ def upload_resume():
         finally:
             if os.path.exists(file_path):
                 os.remove(file_path)
-        # Create unique session ID for this interview
-        session_id = str(uuid.uuid4())
-        session['session_id'] = session_id
-        
-        # Save the file
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{session_id}_{filename}")
-        file.save(file_path)
-        
-        try:
-            # Extract role and skills from resume
-            role_info = resume_analyzer.extract_role_info(file_path)
-            skills = resume_analyzer.extract_skills(file_path)
+
+@app.route('/get_questions', methods=['POST'])
+def get_questions():
+    try:
+        if 'resume_analysis' not in session:
+            return jsonify({'error': 'Session expired'}), 400
             
-            # Store in session
-            session['role'] = role_info.get('role', 'General')
-            session['experience_level'] = role_info.get('experience_level', 'mid')
-            session['skills'] = skills
-            session['resume_path'] = file_path
+        analysis = session.get('resume_analysis', {})
+        resume_text = session.get('resume_text', '')
+        
+        # Check if we have specific project/experience data
+        if not analysis.get('projects') and not analysis.get('experience'):
+            # Fall back to simpler question generation
+            role = session.get('role', 'Software Developer')
+            domain = session.get('domain', 'General')
+            skills = session.get('skills', [])
+            experience_level = session.get('experience_level', 'mid')
+
+            prompt = f"""
+            You are an expert technical interviewer. Generate 5 technical interview questions.
             
-            return jsonify({
-                'success': True,
-                'redirect': '/interview',
-                'role': session['role'],
-                'skills': skills
-            })
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
+            Role: {role}
+            Domain: {domain}
+            Skills: {', '.join(skills)}
+            Level: {experience_level}
+            
+            Resume Text:
+            {resume_text}
+
+            Return ONLY a JSON array in this exact format, with no additional text:
+            [
+                "Question 1 text",
+                "Question 2 text",
+                "Question 3 text",
+                "Question 4 text",
+                "Question 5 text"
+            ]
+            """
+        else:
+            # Use detailed question generation with project/experience references
+            prompt = f"""
+            You are an expert technical interviewer. Generate 5 highly specific technical interview questions based on this candidate's actual experience.
+
+            Resume Analysis:
+            Role: {analysis.get('role', 'Software Developer')}
+            Experience Level: {analysis.get('experience_level', 'mid')}
+            Years of Experience: {analysis.get('years_of_experience', 0)}
+            Technical Skills: {', '.join(analysis.get('skills', {}).get('technical_skills', []))}
+            
+            Projects: {json.dumps(analysis.get('projects', []))}
+            Work Experience: {json.dumps(analysis.get('experience', []))}
+            
+            Complete Resume Text:
+            {resume_text}
+
+            Requirements:
+            1. Each question MUST reference specific projects or work experience from their resume
+            2. Questions should focus on technologies they've actually used
+            3. Include scenario-based questions based on their real projects
+            4. Match the difficulty to their experience level
+            5. Ask about specific technical challenges they've mentioned
+
+            Return ONLY a JSON array with exactly 5 questions, each referencing specific details from their resume.
+            Format: [
+                "Regarding your project X, explain how you implemented Y using Z technology...",
+                "In your role at Company A, you worked on B. How would you...",
+                "You mentioned experience with Technology C in Project D. Describe...",
+                "Based on your work at Company E, design a solution for...",
+                "Considering your implementation of Feature F, explain the technical challenges..."
+            ]
+            """
+
+        response = model.generate_content(prompt)
+        response_text = response.text.strip()
+        
+        # Parse and validate response
+        json_match = re.search(r'\[.*\]', response_text, re.DOTALL)
+        if not json_match:
+            return jsonify({'error': 'Invalid response format from AI'}), 500
+            
+        questions = json.loads(json_match.group())
+        if not isinstance(questions, list) or len(questions) < 5:
+            return jsonify({'error': 'Invalid questions format'}), 500
+            
+        session['questions'] = questions
+        return jsonify({
+            'success': True,
+            'questions': questions
+        })
+
+    except Exception as e:
+        print(f"Error generating questions: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/interview')
 def interview():
@@ -110,120 +177,6 @@ def interview():
     return render_template('interview.html', 
                           role=session.get('role'),
                           skills=session.get('skills'))
-
-@app.route('/get_questions', methods=['POST'])
-def get_questions():
-    try:
-        if 'role' not in session or 'skills' not in session:
-            return jsonify({'error': 'Session expired'}), 400
-            
-        role = session.get('role', 'Software Developer')
-        domain = session.get('domain', 'General')
-        skills = session.get('skills', [])
-        experience_level = session.get('experience_level', 'mid')
-        resume_text = session.get('resume_text', '')  
-
-        prompt = f"""
-        You are an expert technical interviewer. Generate 5 technical interview questions.
-        
-        Role: {role}
-        Domain: {domain}
-        Skills: {', '.join(skills)}
-        Level: {experience_level}
-        
-        Resume Text:
-        {resume_text}
-
-        Return ONLY a JSON array in this exact format, with no additional text:
-        [
-            "Question 1 text",
-            "Question 2 text",
-            "Question 3 text",
-            "Question 4 text",
-            "Question 5 text"
-        ]
-        """
-
-        # Generate questions using Gemini
-        response = model.generate_content(prompt)
-        response_text = response.text.strip()
-        
-        # Clean and parse JSON response
-        json_match = re.search(r'\[.*\]', response_text, re.DOTALL)
-        if not json_match:
-            return jsonify({'error': 'Invalid response format from AI'}), 500
-            
-        try:
-            questions = json.loads(json_match.group())
-            if not isinstance(questions, list) or len(questions) < 5:
-                return jsonify({'error': 'Invalid questions format'}), 500
-                
-            # Store questions in session
-            session['questions'] = questions
-            return jsonify({
-                'success': True,
-                'questions': questions
-            })
-        except json.JSONDecodeError as e:
-            print(f"JSON parsing error: {e}")
-            return jsonify({'error': 'Invalid JSON format'}), 500
-
-    except Exception as e:
-        print(f"Error generating questions: {e}")
-        return jsonify({'error': str(e)}), 500
-
-    except Exception as e:
-        print(f"Error in get_questions: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-        
-        prompt = f"""
-        You are an expert technical interviewer for {role} position.
-        Generate 5 unique and specific interview questions based on these requirements:
-
-        Role: {role}
-        Skills: {', '.join(skills)}
-
-        Requirements:
-        1. First question should be about their experience with {skills[0] if skills else 'their main technology'}
-        2. Second question should be a technical problem-solving scenario
-        3. Third question should test their knowledge of {skills[1] if len(skills) > 1 else 'relevant technologies'}
-        4. Fourth question should be about system design or architecture
-        5. Fifth question should be about their biggest technical achievement
-
-        Make questions very specific to the role and skills.
-        Return as JSON array with objects containing:
-        - question: detailed interview question
-        - expected_answer: specific points that should be covered in a good answer
-        - difficulty: easy/medium/hard
-        - score_criteria: specific points to evaluate the answer (0-100)
-
-        Ensure questions are detailed and technical.
-        """
-        
-        response = model.generate_content(prompt)
-        questions_data = json.loads(response.text)
-        
-        session['current_questions'] = questions_data
-        session['answers'] = []
-        session['scores'] = []
-        
-        return jsonify({
-            'success': True,
-            'questions': [q['question'] for q in questions_data]
-        })
-        
-    except Exception as e:
-        print(f"Error generating questions: {e}")
-        return jsonify({
-            'success': True,
-            'questions': [
-                f"Describe your experience with {skills[0] if skills else 'your main technology'}.",
-                "Explain a challenging technical problem you solved recently.",
-                f"How would you implement a system using {', '.join(skills[:2])}?",
-                "Design a scalable architecture for a real-time application.",
-                "What's your most significant technical achievement?"
-            ]
-        })
 
 @app.route('/analyze_response', methods=['POST'])
 def analyze_response():
@@ -356,53 +309,6 @@ def get_final_feedback():
     except Exception as e:
         print(f"Error getting final feedback: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
-    video_data = data.get('videoData', '')
-    audio_data = data.get('audioData', '')
-    
-    try:
-        # Analyze different aspects of the response
-        sentiment_score = sentiment_analyzer.analyze(response)
-        video_analysis = video_analyzer.analyze(video_data)
-        voice_analysis = voice_analyzer.analyze(audio_data)
-        
-        # Calculate comprehensive score
-        score = score_calculator.calculate_score(
-            question=question,
-            response=response,
-            sentiment=sentiment_score,
-            video_analysis=video_analysis,
-            voice_analysis=voice_analysis
-        )
-        
-        # Update interview context
-        context = session.get('interview_context', {})
-        context['last_score'] = score
-        context['question_history'] = context.get('question_history', []) + [question]
-        session['interview_context'] = context
-        
-        # Adjust difficulty based on performance
-        session['current_difficulty'] = 'hard' if score > 80 else 'medium' if score > 50 else 'easy'
-        
-        # Generate follow-up question or end interview
-        if len(context['question_history']) < 5:
-            follow_up = question_generator.generate_follow_up(
-                response, score, session.get('current_difficulty')
-            )
-        else:
-            follow_up = None
-        
-        return jsonify({
-            'success': True,
-            'score': score,
-            'feedback': [
-                f"Content Score: {score['technical_score']}%",
-                f"Communication Score: {score['communication_score']}%",
-                f"Confidence Score: {score['confidence_score']}%"
-            ],
-            'follow_up': follow_up
-        })
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 @app.route('/submit_interview', methods=['POST'])
 def submit_interview():
