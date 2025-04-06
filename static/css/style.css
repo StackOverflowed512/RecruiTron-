@@ -711,10 +711,9 @@ body.torch-effect {
 
 /* Update Feedback Page Styles */
 .feedback-page {
-    background: linear-gradient(135deg, #0a0a2e 0%, #1a1a3a 100%);
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
     min-height: 100vh;
     position: relative;
-    overflow-y: auto;
     overflow-x: hidden;
     perspective: 1000px;
 }
@@ -857,5 +856,137 @@ body.torch-effect {
     }
     100% {
         transform: translateY(50px);
+    }
+}
+
+/* Features Page Styles */
+.features-page {
+    background: linear-gradient(135deg, var(--dark-color), #0a0a1a);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.features-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.mega-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 4rem;
+    text-align: center;
+    margin-bottom: 4rem;
+    color: var(--light-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    text-shadow: 0 0 20px var(--primary-color);
+}
+
+.features-grid-advanced {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 3rem;
+    margin: 4rem 0;
+}
+
+.feature-card-3d {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 2.5rem;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(0, 255, 157, 0.2);
+}
+
+.feature-card-3d:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary-color);
+    box-shadow: 0 15px 40px rgba(0, 255, 157, 0.2);
+}
+
+.feature-hologram {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 255, 157, 0.1), rgba(108, 99, 255, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 20px;
+    pointer-events: none;
+}
+
+.feature-card-3d:hover .feature-hologram {
+    opacity: 1;
+}
+
+.feature-content {
+    position: relative;
+    z-index: 2;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+}
+
+.feature-list li {
+    margin: 0.8rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    color: var(--light-color);
+    opacity: 0.9;
+}
+
+.feature-list li::before {
+    content: '→';
+    color: var(--primary-color);
+    position: absolute;
+    left: 0;
+}
+
+.cyber-border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    transform: translateY(100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.feature-card-3d:hover .cyber-border {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.glass-nav {
+    background: rgba(26, 26, 46, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 255, 157, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .mega-title {
+        font-size: 2.5rem;
+    }
+
+    .features-grid-advanced {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-card-3d {
+        padding: 2rem;
     }
 }
