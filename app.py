@@ -121,60 +121,57 @@ def get_questions():
         domain = session.get('domain', 'General')
         skills = session.get('skills', [])
         experience_level = session.get('experience_level', 'mid')
-        
-        prompt = f"""
-        You are an expert technical interviewer. Generate 5 unique technical interview questions.
+        resume_text = session.get('resume_text', '')  
 
-        Candidate Profile:
+        prompt = f"""
+        You are an expert technical interviewer. Generate 5 technical interview questions.
+        
         Role: {role}
         Domain: {domain}
         Skills: {', '.join(skills)}
         Level: {experience_level}
+        
+        Resume Text:
+        {resume_text}
 
-        Create questions that:
-        1. Test implementation using {skills[0] if skills else 'primary skill'}
-        2. Cover system design for {domain}
-        3. Test problem-solving with {skills[1] if len(skills) > 1 else 'core technology'}
-        4. Test integration of {', '.join(skills[:2])}
-        5. Cover best practices in {domain}
-
-        Return ONLY a JSON array in this exact format:
+        Return ONLY a JSON array in this exact format, with no additional text:
         [
-            "Question 1 text here",
-            "Question 2 text here",
-            "Question 3 text here",
-            "Question 4 text here",
-            "Question 5 text here"
+            "Question 1 text",
+            "Question 2 text",
+            "Question 3 text",
+            "Question 4 text",
+            "Question 5 text"
         ]
-        Do not include any other text or formatting.
         """
 
         # Generate questions using Gemini
         response = model.generate_content(prompt)
         response_text = response.text.strip()
         
-        # Extract JSON array from response
-        json_match = re.search(r'\[.*?\]', response_text, re.DOTALL)
+        # Clean and parse JSON response
+        json_match = re.search(r'\[.*\]', response_text, re.DOTALL)
         if not json_match:
-            raise ValueError("Invalid response format from Gemini")
+            return jsonify({'error': 'Invalid response format from AI'}), 500
             
-        questions = json.loads(json_match.group())
-        
-        if not isinstance(questions, list) or len(questions) != 5:
-            raise ValueError("Invalid number of questions")
-        
-        # Store questions in session
-        session['current_questions'] = questions
-        
-        return jsonify({
-            'success': True,
-            'questions': questions
-        })
-        
+        try:
+            questions = json.loads(json_match.group())
+            if not isinstance(questions, list) or len(questions) < 5:
+                return jsonify({'error': 'Invalid questions format'}), 500
+                
+            # Store questions in session
+            session['questions'] = questions
+            return jsonify({
+                'success': True,
+                'questions': questions
+            })
+        except json.JSONDecodeError as e:
+            print(f"JSON parsing error: {e}")
+            return jsonify({'error': 'Invalid JSON format'}), 500
+
     except Exception as e:
-        print(f"Error generating questions: {str(e)}")
+        print(f"Error generating questions: {e}")
         return jsonify({'error': str(e)}), 500
-            
+
     except Exception as e:
         print(f"Error in get_questions: {str(e)}")
         return jsonify({'error': str(e)}), 500

@@ -62,7 +62,6 @@ let currentQuestionIndex = 0;
 
 async function initInterviewPage() {
     try {
-        // Show loading state
         const questionElement = document.getElementById('question');
         questionElement.innerHTML = `
             <div class="loading-questions">
@@ -80,23 +79,24 @@ async function initInterviewPage() {
         });
 
         const data = await response.json();
-        console.log('Response data:', data); // Debug log
-
+        
         if (!response.ok) {
-            throw new Error(data.error || `HTTP error! status: ${response.status}`);
+            throw new Error(data.error || 'Failed to generate questions');
         }
 
-        if (data.success && Array.isArray(data.questions) && data.questions.length > 0) {
-            questions = data.questions;
-            displayCurrentQuestion();
-        } else {
-            throw new Error('Invalid questions format received');
+        if (!data.success || !Array.isArray(data.questions) || data.questions.length === 0) {
+            throw new Error('Invalid response format');
         }
+
+        questions = data.questions;
+        displayCurrentQuestion();
+
     } catch (error) {
         console.error('Error:', error);
         document.getElementById('question').innerHTML = `
             <div class="error-message">
-                <p>${error.message || 'Error loading questions. Please try again.'}</p>
+                <p>Failed to generate interview questions. Please try again.</p>
+                <button onclick="window.location.reload()" class="btn">Retry</button>
                 <button onclick="window.location.href='/'" class="btn">Return to Home</button>
             </div>
         `;
