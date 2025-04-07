@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS Resume Analyzer - RecruitTron</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+</head>
+<body class="ats-analyzer-page">
+    <div id="particles-js"></div>
+    <div class="cyber-grid"></div>
+
+    <div class="container">
+        <nav class="nav-bar glass-nav">
+            <div class="logo-container">
+                <img src="/static/img/logo.png" alt="RecruitTron Logo" class="logo">
+                <span class="logo-text neon-text">RecruitTron</span>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/logout" class="nav-link logout-btn"><span>Logout</span></a>
+            </div>
+        </nav>
+
+        <main class="ats-analyzer-content">
+            <h1 class="cyber-glitch" data-text="ATS Resume Analyzer">ATS Resume Analyzer</h1>
+            
+            <section class="upload-section glassmorphism">
+                <h2>Analyze Your Resume</h2>
+                <p class="section-subtitle">Get your resume's ATS score and optimization suggestions</p>
+                <form id="atsForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="file" id="resume" name="resume" accept=".pdf,.docx,.txt" required>
+                        <label for="resume" class="file-label">
+                            <span class="file-icon">📄</span>
+                            <span class="file-text">Choose your resume</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn-primary pulse">Analyze Resume</button>
+                </form>
+                <div id="loading" class="loading" style="display: none;">
+                    <div class="cyber-spinner"></div>
+                    <p>Analyzing resume with ATS metrics...</p>
+                </div>
+            </section>
+
+            <section id="results" class="results-section glassmorphism" style="display: none;">
+                <div class="score-overview">
+                    <div class="total-ats-score">
+                        <h2>ATS Score</h2>
+                        <div class="score-circle">
+                            <span id="atsScore">0</span>%
+                        </div>
+                    </div>
+                    <div class="score-breakdown">
+                        <div class="score-item">
+                            <label>Keyword Match</label>
+                            <div class="score-bar">
+                                <div id="keywordScore" class="score-fill"></div>
+                            </div>
+                        </div>
+                        <div class="score-item">
+                            <label>Format</label>
+                            <div class="score-bar">
+                                <div id="formatScore" class="score-fill"></div>
+                            </div>
+                        </div>
+                        <div class="score-item">
+                            <label>Readability</label>
+                            <div class="score-bar">
+                                <div id="readabilityScore" class="score-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="improvement-suggestions">
+                    <h3>Improvement Suggestions</h3>
+                    <div id="suggestions" class="suggestions-list"></div>
+                </div>
+
+                <div class="keyword-analysis">
+                    <h3>Keyword Analysis</h3>
+                    <div class="missing-keywords">
+                        <h4>Missing Important Keywords</h4>
+                        <div id="missingKeywords" class="keyword-list"></div>
+                    </div>
+                    <div class="keyword-suggestions">
+                        <h4>Recommended Keywords</h4>
+                        <div id="keywordSuggestions" class="keyword-list"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('atsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            
+            try {
+                const response = await fetch('/analyze-ats', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayResults(data.analysis);
+                } else {
+                    alert(data.error || 'Error analyzing resume');
+                }
+            } catch (error) {
+                alert('Error analyzing resume');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+
+        function displayResults(analysis) {
+            document.getElementById('results').style.display = 'block';
+            
+            // Update scores
+            document.getElementById('atsScore').textContent = analysis.ats_score;
+            document.getElementById('keywordScore').style.width = `${analysis.keyword_match_score}%`;
+            document.getElementById('formatScore').style.width = `${analysis.format_score}%`;
+            document.getElementById('readabilityScore').style.width = `${analysis.readability_score}%`;
+            
+            // Update suggestions
+            const suggestionsHtml = analysis.improvement_suggestions
+                .map(suggestion => `<div class="suggestion-item">${suggestion}</div>`)
+                .join('');
+            document.getElementById('suggestions').innerHTML = suggestionsHtml;
+            
+            // Update keywords
+            const missingKeywordsHtml = analysis.missing_keywords
+                .map(keyword => `<span class="keyword">${keyword}</span>`)
+                .join('');
+            document.getElementById('missingKeywords').innerHTML = missingKeywordsHtml;
+            
+            const keywordSuggestionsHtml = analysis.keyword_suggestions
+                .map(keyword => `<span class="keyword">${keyword}</span>`)
+                .join('');
+            document.getElementById('keywordSuggestions').innerHTML = keywordSuggestionsHtml;
+        }
+    </script>
+</body>
+</html>

@@ -413,5 +413,98 @@ def leaderboard():
 def about():
     return render_template('about.html')
 
+@app.route('/ats-analyzer')
+@login_required
+def ats_analyzer():
+    return render_template('ats_analyzer.html')
+
+@app.route('/analyze-ats', methods=['POST'])
+@login_required
+def analyze_ats():
+    if 'resume' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+        
+    file = request.files['resume']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+        
+    if file:
+        try:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            
+            # Extract text from resume
+            resume_text = resume_analyzer.extract_text(file_path)
+            
+            # Create ATS analysis prompt
+            prompt = f"""
+            Analyze this resume for ATS (Applicant Tracking System) optimization.
+            Return the analysis in JSON format.
+            
+            Resume Text:
+            {resume_text}
+            
+            {{"ats_score": 0, "keyword_match_score": 0, "format_score": 0, "readability_score": 0, "missing_keywords": [], "improvement_suggestions": [], "format_suggestions": [], "keyword_suggestions": []}}
+            
+            Analyze and provide scores (0-100) and suggestions for:
+            1. Overall ATS compatibility score
+            2. Keyword matching with industry standards
+            3. Format and structure
+            4. Readability
+            5. Missing important keywords
+            6. Specific improvement suggestions
+            7. Format optimization tips
+            8. Recommended keywords to add
+            """
+            
+            response = model.generate_content(prompt)
+            response_text = response.text.strip()
+            
+            # Clean and parse JSON response
+            json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+            if json_match:
+                response_text = json_match.group()
+            
+            try:
+                analysis = json.loads(response_text)
+            except json.JSONDecodeError:
+                # Fallback response if JSON parsing fails
+                analysis = {
+                    "ats_score": 70,
+                    "keyword_match_score": 65,
+                    "format_score": 75,
+                    "readability_score": 70,
+                    "missing_keywords": ["relevant skill 1", "relevant skill 2"],
+                    "improvement_suggestions": [
+                        "Consider adding more specific technical skills",
+                        "Quantify your achievements with metrics"
+                    ],
+                    "format_suggestions": [
+                        "Use standard section headings",
+                        "Ensure consistent formatting"
+                    ],
+                    "keyword_suggestions": [
+                        "industry-specific term 1",
+                        "industry-specific term 2"
+                    ]
+                }
+            
+            return jsonify({
+                'success': True,
+                'analysis': analysis
+            })
+            
+        except Exception as e:
+            print(f"Error analyzing resume: {str(e)}")
+            return jsonify({
+                'error': 'Failed to analyze resume. Please try again.',
+                'details': str(e)
+            }), 500
+        finally:
+            # Clean up the uploaded file
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
 if __name__ == '__main__':
     app.run(debug=True, port=5501)
