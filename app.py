@@ -10,6 +10,8 @@ from models.voice_analyzer import VoiceAnalyzer
 import uuid
 import google.generativeai as genai
 from dotenv import load_dotenv
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from models.user import db, User
 
 # Load environment variables
 load_dotenv()
@@ -30,10 +32,69 @@ sentiment_analyzer = SentimentAnalyzer(model)
 video_analyzer = VideoAnalyzer()
 voice_analyzer = VoiceAnalyzer()
 
+# Add these configurations after creating the Flask app
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///recruittron.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize extensions
+db.init_app(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+# Update the index route to require login
 @app.route('/')
+@login_required
 def index():
     return render_template('index.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = User.query.filter_by(username=username).first()
+        
+        if user and user.check_password(password):
+            login_user(user)
+            return redirect('/')
+        return render_template('login.html', error='Invalid username or password')
+    
+    return render_template('login.html')
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        if User.query.filter_by(username=username).first():
+            return render_template('signup.html', error='Username already exists')
+        if User.query.filter_by(email=email).first():
+            return render_template('signup.html', error='Email already registered')
+        
+        user = User(username=username, email=email)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        
+        login_user(user)
+        return redirect('/')
+    
+    return render_template('signup.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect('/login')
+
+# Add @login_required to all other routes that should be protected
 @app.route('/upload_resume', methods=['POST'])
 def upload_resume():
     if 'resume' not in request.files:
