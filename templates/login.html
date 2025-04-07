@@ -12,6 +12,13 @@
     <div class="auth-container">
         <div class="auth-card">
             <h2 class="cyber-glitch">Login</h2>
+            <!-- Add this after the <h2> and before the form -->
+            {% if message %}
+            <div class="success-message">{{ message }}</div>
+            {% endif %}
+            {% if error %}
+            <div class="error-message">{{ error }}</div>
+            {% endif %}
             <form id="loginForm" method="POST" action="/login">
                 <div class="form-group">
                     <input type="text" name="username" required placeholder="Username">

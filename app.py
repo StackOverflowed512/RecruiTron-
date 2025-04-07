@@ -83,8 +83,8 @@ def signup():
         db.session.add(user)
         db.session.commit()
         
-        login_user(user)
-        return redirect('/')
+        # Redirect to login page with a success message
+        return render_template('login.html', message='Registration successful! Please login.')
     
     return render_template('signup.html')
 
