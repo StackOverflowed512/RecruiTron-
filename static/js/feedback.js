@@ -85,15 +85,25 @@ function updateTotalScore(score) {
 
 function displayFeedback(feedback) {
     const lists = {
-        'strengthsList': feedback.strengths,
-        'improvementsList': feedback.areas_for_improvement,
-        'recommendationsList': feedback.recommendations
+        'strengthsList': {
+            items: feedback.strengths,
+            icon: '💪'
+        },
+        'improvementsList': {
+            items: feedback.areas_for_improvement,
+            icon: '🎯'
+        },
+        'recommendationsList': {
+            items: feedback.recommendations,
+            icon: '💡'
+        }
     };
 
-    for (const [listId, items] of Object.entries(lists)) {
+    for (const [listId, data] of Object.entries(lists)) {
         const list = document.getElementById(listId);
-        list.innerHTML = items.map(item => `
+        list.innerHTML = data.items.map(item => `
             <li class="feedback-item">
+                <span class="feedback-icon">${data.icon}</span>
                 ${item}
             </li>
         `).join('');
