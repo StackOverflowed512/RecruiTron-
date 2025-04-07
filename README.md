@@ -45,9 +45,16 @@ RecruiTron is an innovative AI-powered technical interview platform developed du
 - **Chart.js** - Performance visualization
 - **Particles.js** - UI effects
 
-## 🎥 Demo
+## 🎥 Demo & Screenshots
 
-![Demo Interface](https://images.unsplash.com/photo-1526925539332-aa3b66e35444?auto=format&fit=crop&q=80)
+![AI Interview Process](https://images.unsplash.com/photo-1560472355-536de3962603?auto=format&fit=crop&q=80)
+*AI-powered interview analysis in action*
+
+![Resume Analysis](https://images.unsplash.com/photo-1616628188859-7a11abb6fcc9?auto=format&fit=crop&q=80)
+*Smart resume parsing and analysis*
+
+![Real-time Feedback](https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&q=80)
+*Real-time performance analytics dashboard*
 
 [Watch Demo Video](#) *(Coming Soon)*
 
@@ -82,7 +89,7 @@ RecruiTron is an innovative AI-powered technical interview platform developed du
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/RecruiTron-.git
+git clone https://github.com/StackOverflowed512/RecruiTron-
 ```
 
 2. Install requirements
@@ -90,22 +97,19 @@ git clone https://github.com/yourusername/RecruiTron-.git
 pip install -r requirements.txt
 ```
 
-3. Set up environment variables
-```bash
-cp .env.example .env
-# Add your Gemini API key
-```
-
-4. Initialize database
+3. Initialize database
 ```bash
 python init_db.py
 ```
 
-5. Run the application
+4. Run the application
 ```bash
 python app.py
 ```
 
+~~~
+You'll required a gemini-api key.
+~~~
 ## 🔮 Future Enhancements
 
 - [ ] Integration with popular ATS platforms
@@ -121,9 +125,31 @@ python app.py
 - **API Endpoints**: 15+
 - **UI Components**: 25+
 
-## 🤝 Contribution
+## 🤝 Open Source Contribution
 
-This project is currently personal, but I welcome feedback and suggestions! Feel free to open issues or contact me for discussions.
+This project is open for contributions! Here's how you can help:
+
+### Areas for Contribution
+- 🎯 Bug fixes and issue resolution
+- 🚀 New feature implementation
+- 📝 Documentation improvements
+- 🧪 Test coverage enhancement
+- 🎨 UI/UX enhancements
+
+### How to Contribute
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+### Contribution Guidelines
+- Follow the existing code style
+- Add appropriate comments
+- Update documentation as needed
+- Add tests for new features
+- Check for code quality
+
 
 ## 📜 License
 
@@ -136,4 +162,4 @@ A passionate developer exploring the intersection of AI and web technologies. Cu
 ---
 *Made by Omkar*
 
-[LinkedIn](linkedin.com/in/omkar-mutyalwar) 
+[LinkedIn](linkedin.com/in/omkar-mutyalwar)
