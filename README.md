@@ -106,10 +106,9 @@ python init_db.py
 ```bash
 python app.py
 ```
+> [!Warning]
+>You'll required a gemini-api key!
 
-~~~
-You'll required a gemini-api key.
-~~~
 ## 🔮 Future Enhancements
 
 - [ ] Integration with popular ATS platforms
