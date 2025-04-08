@@ -1221,3 +1221,217 @@ body.torch-effect {
     border-radius: 20px;
     border: 1px solid #00ff9d;
 }
+
+/* Past Interviews Page Styles */
+.past-interviews-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.interviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.interview-card {
+    padding: 1.5rem;
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+}
+
+.interview-card:hover {
+    transform: translateY(-5px);
+}
+
+.interview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.interview-date {
+    color: var(--accent-color);
+    font-size: 0.9rem;
+}
+
+/* Interview Details Page Styles */
+.interview-details-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.interview-info {
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.score-dashboard {
+    margin-top: 2rem;
+    height: 300px;
+}
+
+.feedback-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .interviews-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .feedback-sections {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ... existing styles ... */
+
+.interview-details-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.interview-info {
+    padding: 2.5rem;
+    border-radius: 15px;
+    text-align: center;
+    background: rgba(13, 13, 23, 0.7);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 255, 157, 0.2);
+    box-shadow: 0 0 30px rgba(0, 255, 157, 0.1);
+}
+
+.role-title {
+    font-size: 2.2rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.interview-date {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.chart-container {
+    height: 400px;
+    margin: 2rem auto;
+    max-width: 600px;
+    position: relative;
+}
+
+.feedback-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.feedback-card {
+    padding: 2rem;
+    border-radius: 15px;
+    background: rgba(13, 13, 23, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 255, 157, 0.2);
+    transition: all 0.3s ease;
+}
+
+.feedback-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(0, 255, 157, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 255, 157, 0.15);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 255, 157, 0.2);
+}
+
+.card-icon {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+
+.feedback-list {
+    list-style: none;
+    padding: 0;
+}
+
+.feedback-item {
+    padding: 1rem;
+    margin: 0.8rem 0;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.feedback-item:hover {
+    transform: translateX(10px);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 768px) {
+    .feedback-sections {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-container {
+        height: 300px;
+    }
+    
+    .role-title {
+        font-size: 1.8rem;
+    }
+}
+
+/* ... existing code ... */
+
+.interview-date {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    font-family: 'Roboto', sans-serif;
+    letter-spacing: 1px;
+    background: rgba(0, 255, 157, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 157, 0.2);
+    display: inline-block;
+}
+
+.interview-header .interview-date {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    padding: 0.3rem 0.8rem;
+}
+

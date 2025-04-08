@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Details - RecruitTron</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="interview-details-page">
+    <div id="particles-js"></div>
+    <div class="cyber-grid"></div>
+
+    <div class="container">
+        <nav class="nav-bar glass-nav">
+            <div class="logo-container">
+                <img src="/static/img/logo.png" alt="RecruitTron Logo" class="logo">
+                <span class="logo-text neon-text">RecruitTron</span>
+            </div>
+            <div class="nav-links">
+                <a href="/past-interviews" class="nav-link">Back to Past Interviews</a>
+                <a href="/" class="nav-link">Home</a>
+            </div>
+        </nav>
+
+        <main class="interview-details-content">
+            <h1 class="cyber-glitch" data-text="Interview Analysis">Interview Analysis</h1>
+            
+            <div class="details-grid">
+                <div class="interview-info glassmorphism">
+                    <h2 class="role-title">{{ interview.role }}</h2>
+                    <p class="interview-date">{{ interview.date.strftime('%B %d, %Y') }}</p>
+                    
+                    <div class="score-dashboard">
+                        <div class="chart-container">
+                            <canvas id="scoreChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feedback-sections">
+                    <div class="feedback-card strengths glassmorphism">
+                        <div class="card-header">
+                            <span class="card-icon">💪</span>
+                            <h3>Key Strengths</h3>
+                        </div>
+                        <ul class="feedback-list">
+                            {% for strength in interview.strengths %}
+                            <li class="feedback-item">{{ strength }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="feedback-card improvements glassmorphism">
+                        <div class="card-header">
+                            <span class="card-icon">📈</span>
+                            <h3>Areas for Improvement</h3>
+                        </div>
+                        <ul class="feedback-list">
+                            {% for improvement in interview.improvements %}
+                            <li class="feedback-item">{{ improvement }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="feedback-card recommendations glassmorphism">
+                        <div class="card-header">
+                            <span class="card-icon">🎯</span>
+                            <h3>Recommendations</h3>
+                        </div>
+                        <ul class="feedback-list">
+                            {% for recommendation in interview.recommendations %}
+                            <li class="feedback-item">{{ recommendation }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize score chart with improved configuration
+        const ctx = document.getElementById('scoreChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Technical Skills', 'Communication', 'Confidence', 'Overall Performance'],
+                datasets: [{
+                    label: 'Interview Performance',
+                    data: [
+                        {{ interview.technical_score }},
+                        {{ interview.communication_score }},
+                        {{ interview.confidence_score }},
+                        {{ interview.total_score }}
+                    ],
+                    backgroundColor: 'rgba(0, 255, 157, 0.2)',
+                    borderColor: 'rgba(0, 255, 157, 1)',
+                    pointBackgroundColor: 'rgba(0, 255, 157, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(0, 255, 157, 1)',
+                    borderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20,
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            backdropColor: 'transparent'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        angleLines: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        pointLabels: {
+                            color: 'rgba(255, 255, 255, 0.9)',
+                            font: {
+                                size: 12,
+                                family: "'Orbitron', sans-serif"
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script src="/static/js/particles-config.js"></script>
+</body>
+</html>

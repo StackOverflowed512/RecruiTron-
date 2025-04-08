@@ -12,6 +12,7 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from models.user import db, User
+from models.interview_feedback import InterviewFeedback
 
 # Load environment variables
 load_dotenv()
@@ -239,7 +240,9 @@ def interview():
                           role=session.get('role'),
                           skills=session.get('skills'))
 
+# Remove the duplicate @app.route('/analyze_response') and keep only one version
 @app.route('/analyze_response', methods=['POST'])
+@login_required
 def analyze_response():
     try:
         data = request.json
@@ -320,6 +323,21 @@ def analyze_response():
                 feedback_text = feedback_match.group()
             
             overall_feedback = json.loads(feedback_text)
+            
+            # Save feedback to database
+            feedback = InterviewFeedback(
+                user_id=current_user.id,
+                technical_score=final_scores['technical_score'],
+                communication_score=final_scores['communication_score'],
+                confidence_score=final_scores['confidence_score'],
+                total_score=final_scores['total_score'],
+                strengths=overall_feedback.get('strengths', [])[:3],
+                improvements=overall_feedback.get('areas_for_improvement', [])[:3],
+                recommendations=overall_feedback.get('recommendations', [])[:3],
+                role=session.get('role', 'Software Developer')
+            )
+            db.session.add(feedback)
+            db.session.commit()
             
             # Store minimal feedback data
             session['final_score'] = final_scores
@@ -505,6 +523,25 @@ def analyze_ats():
             # Clean up the uploaded file
             if os.path.exists(file_path):
                 os.remove(file_path)
+
+@app.route('/past-interviews')
+@login_required
+def past_interviews():
+    # Get all interviews for the current user, ordered by date (newest first)
+    interviews = InterviewFeedback.query.filter_by(user_id=current_user.id)\
+        .order_by(InterviewFeedback.date.desc()).all()
+    return render_template('past_interviews.html', interviews=interviews)
+
+@app.route('/interview-details/<int:interview_id>')
+@login_required
+def interview_details(interview_id):
+    # Get the specific interview for the current user
+    interview = InterviewFeedback.query.filter_by(
+        id=interview_id, 
+        user_id=current_user.id
+    ).first_or_404()
+    
+    return render_template('interview_details.html', interview=interview)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5501)

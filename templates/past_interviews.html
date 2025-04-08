@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Past Interviews - RecruitTron</title>
+        <link rel="stylesheet" href="/static/css/style.css" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body class="past-interviews-page">
+        <div id="particles-js"></div>
+        <div class="cyber-grid"></div>
+
+        <div class="container">
+            <nav class="nav-bar glass-nav">
+                <div class="logo-container">
+                    <img
+                        src="/static/img/logo.png"
+                        alt="RecruitTron Logo"
+                        class="logo"
+                    />
+                    <span class="logo-text neon-text">RecruitTron</span>
+                </div>
+                <div class="nav-links">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/logout" class="nav-link logout-btn"
+                        ><span>Logout</span></a
+                    >
+                </div>
+            </nav>
+
+            <main class="past-interviews-content">
+                <h1 class="cyber-glitch" data-text="Past Interviews">
+                    Past Interviews
+                </h1>
+
+                <div class="interviews-grid">
+                    {% for interview in interviews %}
+                    <div class="interview-card glassmorphism">
+                        <div class="interview-header">
+                            <h3>{{ interview.role }}</h3>
+                            <span class="interview-date">
+                                {{ interview.date.strftime('%B %d, %Y') }}
+                            </span>
+                        </div>
+                        <div class="score-overview">
+                            <div class="total-score">
+                                <div class="score-circle">
+                                    <span
+                                        >{{ "%.1f"|format(interview.total_score)
+                                        }}%</span
+                                    >
+                                </div>
+                            </div>
+                            <div class="score-breakdown">
+                                <div class="score-item">
+                                    <label>Technical</label>
+                                    <div class="score-bar">
+                                        <div
+                                            class="score-fill"
+                                            style="width: {{ interview.technical_score }}%"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div class="score-item">
+                                    <label>Communication</label>
+                                    <div class="score-bar">
+                                        <div
+                                            class="score-fill"
+                                            style="width: {{ interview.communication_score }}%"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a
+                            href="{{ url_for('interview_details', interview_id=interview.id) }}"
+                            class="cyber-button"
+                        >
+                            <span></span>
+                            <span></span>
+                            View Details
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </main>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+        <script src="/static/js/particles-config.js"></script>
+    </body>
+</html>
