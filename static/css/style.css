@@ -1435,3 +1435,31 @@ body.torch-effect {
     padding: 0.3rem 0.8rem;
 }
 
+
+.progress-chart-container {
+    background: rgba(13, 13, 23, 0.7);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(0, 255, 157, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+.progress-chart-container h2 {
+    color: var(--primary-color);
+    font-family: 'Orbitron', sans-serif;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.progress-chart-container canvas {
+    width: 100% !important;
+    height: 300px !important;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .progress-chart-container canvas {
+        height: 200px !important;
+    }
+}

@@ -9,6 +9,7 @@
             href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
             rel="stylesheet"
         />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <body class="past-interviews-page">
         <div id="particles-js"></div>
@@ -33,9 +34,12 @@
             </nav>
 
             <main class="past-interviews-content">
-                <h1 class="cyber-glitch" data-text="Past Interviews">
-                    Past Interviews
-                </h1>
+                <h1 class="cyber-glitch" data-text="Past Interviews">Past Interviews</h1>
+                
+                <div class="progress-chart-container glassmorphism">
+                    <h2>Your Progress</h2>
+                    <canvas id="progressChart"></canvas>
+                </div>
 
                 <div class="interviews-grid">
                     {% for interview in interviews %}
@@ -91,5 +95,80 @@
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
         <script src="/static/js/particles-config.js"></script>
+        <script>
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            
+            // Prepare data from interviews
+            const interviews = [
+                {% for interview in interviews %}
+                    {
+                        date: "{{ interview.date.strftime('%B %d, %Y') }}",
+                        score: {{ interview.total_score }}
+                    },
+                {% endfor %}
+            ].reverse(); // Show oldest to newest
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: interviews.map(i => i.date),
+                    datasets: [{
+                        label: 'Overall Performance',
+                        data: interviews.map(i => i.score),
+                        borderColor: 'rgba(0, 255, 157, 1)',
+                        backgroundColor: 'rgba(0, 255, 157, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgba(0, 255, 157, 1)',
+                        pointBorderColor: '#fff',
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                font: {
+                                    family: "'Roboto', sans-serif"
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                font: {
+                                    family: "'Roboto', sans-serif"
+                                },
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.9)',
+                                font: {
+                                    family: "'Orbitron', sans-serif"
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
     </body>
 </html>
