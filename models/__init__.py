@@ -5,3 +5,4 @@ from .video_analyzer import VideoAnalyzer
 from .voice_analyzer import VoiceAnalyzer
 from .user import User
 from .interview_feedback import InterviewFeedback
+from .badge import Badge, UserBadge

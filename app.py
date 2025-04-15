@@ -14,6 +14,8 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from models.user import db, User
 from models.interview_feedback import InterviewFeedback
 from sqlalchemy import func, desc
+from datetime import datetime, timedelta
+from models.badge import Badge, UserBadge
 
 # Load environment variables
 load_dotenv()
@@ -550,6 +552,93 @@ def past_interviews():
     interviews = InterviewFeedback.query.filter_by(user_id=current_user.id)\
         .order_by(InterviewFeedback.date.desc()).all()
     return render_template('past_interviews.html', interviews=interviews)
+
+
+# Add these routes
+@app.route('/my-badges')
+@login_required
+def my_badges():
+    # Get user's earned badges
+    earned_badges = UserBadge.query.filter_by(user_id=current_user.id).all()
+    
+    # Get all available badges
+    available_badges = Badge.query.all()
+    
+    # Create a set of earned badge IDs for easy lookup
+    earned_badge_ids = {ub.badge_id for ub in earned_badges}
+    
+    # Separate badges into earned and unearned
+    earned = [
+        {
+            'name': ub.badge.name,
+            'description': ub.badge.description,
+            'icon': ub.badge.icon,
+            'earned_date': ub.earned_date
+        }
+        for ub in earned_badges
+    ]
+    
+    unearned = [
+        {
+            'name': badge.name,
+            'description': badge.description,
+            'icon': badge.icon
+        }
+        for badge in available_badges
+        if badge.id not in earned_badge_ids
+    ]
+    
+    return render_template('my_badges.html', 
+                         earned_badges=earned,
+                         available_badges=unearned)
+
+def award_badge(user_id, badge_name):
+    try:
+        # Check if badge exists
+        badge = Badge.query.filter_by(name=badge_name).first()
+        if not badge:
+            return False
+            
+        # Check if user already has the badge
+        existing = UserBadge.query.filter_by(
+            user_id=user_id,
+            badge_id=badge.id
+        ).first()
+        
+        if not existing:
+            new_badge = UserBadge(user_id=user_id, badge_id=badge.id)
+            db.session.add(new_badge)
+            db.session.commit()
+            return True
+            
+        return False
+    except Exception as e:
+        print(f"Error awarding badge: {e}")
+        db.session.rollback()
+        return False
+
+def check_and_award_badges(user_id):
+    try:
+        # Check first interview badge
+        interview_count = InterviewFeedback.query.filter_by(user_id=user_id).count()
+        if interview_count == 1:
+            award_badge(user_id, 'First Interview')
+        
+        # Check high score badge
+        high_score = InterviewFeedback.query.filter_by(user_id=user_id)\
+            .filter(InterviewFeedback.total_score >= 90).first()
+        if high_score:
+            award_badge(user_id, 'High Scorer')
+        
+        # Check weekly warrior badge
+        one_week_ago = datetime.utcnow() - timedelta(days=7)
+        weekly_count = InterviewFeedback.query.filter_by(user_id=user_id)\
+            .filter(InterviewFeedback.date >= one_week_ago).count()
+        if weekly_count >= 3:
+            award_badge(user_id, 'Weekly Warrior')
+            
+    except Exception as e:
+        print(f"Error checking badges: {e}")
 
 @app.route('/interview-details/<int:interview_id>')
 @login_required

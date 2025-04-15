@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Badges - RecruitTron</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body class="badges-page">
+    <div id="particles-js"></div>
+    <div class="cyber-grid"></div>
+    
+    <div class="container">
+        <nav class="nav-bar glass-nav">
+            <div class="logo-container">
+                <img src="/static/img/logo.png" alt="RecruitTron Logo" class="logo">
+                <span class="logo-text neon-text">RecruitTron</span>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/leaderboard" class="nav-link">Leaderboard</a>
+                <a href="/logout" class="nav-link logout-btn"><span>Logout</span></a>
+            </div>
+        </nav>
+
+        <main class="badges-content">
+            <h1 class="cyber-glitch" data-text="Achievement Badges">Achievement Badges</h1>
+            
+            <div class="badges-container glassmorphism">
+                <div class="badges-section">
+                    <h2>Earned Achievements</h2>
+                    <div class="badges-grid">
+                        {% for badge in earned_badges %}
+                        <div class="badge-card" data-aos="fade-up">
+                            <div class="badge-icon">{{ badge.icon }}</div>
+                            <h3>{{ badge.name }}</h3>
+                            <p>{{ badge.description }}</p>
+                            <span class="earned-date">Earned: {{ badge.earned_date.strftime('%Y-%m-%d') }}</span>
+                        </div>
+                        {% endfor %}
+                        {% if not earned_badges %}
+                        <div class="empty-state">
+                            <p>Complete interviews to earn badges!</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="badges-section">
+                    <h2>Badges to Unlock</h2>
+                    <div class="badges-grid">
+                        {% for badge in available_badges %}
+                        <div class="badge-card locked" data-aos="fade-up">
+                            <div class="badge-icon">{{ badge.icon }}</div>
+                            <h3>{{ badge.name }}</h3>
+                            <p>{{ badge.description }}</p>
+                            <span class="lock-icon">🔒</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="/static/js/particles-config.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            offset: 100,
+            once: true
+        });
+    </script>
+</body>
+</html>
