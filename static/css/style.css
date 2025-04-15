@@ -1463,3 +1463,113 @@ body.torch-effect {
         height: 200px !important;
     }
 }
+
+/* Leaderboard Styles */
+.leaderboard-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.leaderboard-container {
+    padding: 2rem;
+    border-radius: 15px;
+    background: rgba(13, 13, 23, 0.7);
+    backdrop-filter: blur(10px);
+}
+
+.leaderboard-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.leaderboard-header h2 {
+    color: var(--primary-color);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.leaderboard-grid {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.rank-card {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.rank-card:hover {
+    transform: translateX(10px);
+}
+
+.rank-card.gold {
+    background: linear-gradient(45deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.rank-card.silver {
+    background: linear-gradient(45deg, rgba(192, 192, 192, 0.1), rgba(192, 192, 192, 0.05));
+    border: 1px solid rgba(192, 192, 192, 0.3);
+}
+
+.rank-card.bronze {
+    background: linear-gradient(45deg, rgba(205, 127, 50, 0.1), rgba(205, 127, 50, 0.05));
+    border: 1px solid rgba(205, 127, 50, 0.3);
+}
+
+.rank-number {
+    font-size: 2rem;
+    font-family: 'Orbitron', sans-serif;
+    color: var(--primary-color);
+    margin-right: 2rem;
+    min-width: 60px;
+}
+
+.user-info {
+    flex-grow: 1;
+}
+
+.user-info h3 {
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.score-badge {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.score {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.interview-count {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .leaderboard-content {
+        padding: 1rem;
+    }
+    
+    .rank-card {
+        padding: 1rem;
+    }
+    
+    .rank-number {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        min-width: 40px;
+    }
+}

@@ -3,39 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard</title>
+    <title>Global Leaderboard - RecruitTron</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="leaderboard-container">
-        <header>
-            <h1>Interview Leaderboard</h1>
-            <p>Top performers in AI-powered interviews</p>
-        </header>
+<body class="leaderboard-page">
+    <div id="particles-js"></div>
+    <div class="cyber-grid"></div>
 
-        <div class="leaderboard-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Name</th>
-                        <th>Role</th>
-                        <th>Score</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboardBody">
-                    <!-- Leaderboard data will be inserted here -->
-                </tbody>
-            </table>
-        </div>
+    <div class="container">
+        <nav class="nav-bar glass-nav">
+            <div class="logo-container">
+                <img src="/static/img/logo.png" alt="RecruitTron Logo" class="logo">
+                <span class="logo-text neon-text">RecruitTron</span>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/logout" class="nav-link logout-btn"><span>Logout</span></a>
+            </div>
+        </nav>
 
-        <div class="actions">
-            <button class="btn" id="backToFeedback">Back to Feedback</button>
-            <button class="btn primary" id="newInterview">Start New Interview</button>
-        </div>
+        <main class="leaderboard-content">
+            <h1 class="cyber-glitch" data-text="Global Rankings">Global Rankings</h1>
+            
+            <div class="leaderboard-container glassmorphism">
+                <div class="leaderboard-header">
+                    <h2>Top Performers</h2>
+                    <p>Based on overall interview performance</p>
+                </div>
+
+                <div class="leaderboard-grid">
+                    {% for user in leaderboard_data %}
+                    <div class="rank-card {% if user.rank == 1 %}gold{% elif user.rank == 2 %}silver{% elif user.rank == 3 %}bronze{% endif %}">
+                        <div class="rank-number">#{{ user.rank }}</div>
+                        <div class="user-info">
+                            <h3>{{ user.name }}</h3>
+                            <div class="score-badge">
+                                <span class="score">{{ user.avg_score }}%</span>
+                                <span class="interview-count">{{ user.interviews }} interviews</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="actions">
+                    <a href="/" class="cyber-button">
+                        <span></span>
+                        <span></span>
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <script src="/static/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script src="/static/js/particles-config.js"></script>
 </body>
 </html>

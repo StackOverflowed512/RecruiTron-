@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from models.user import db, User
 from models.interview_feedback import InterviewFeedback
+from sqlalchemy import func, desc
 
 # Load environment variables
 load_dotenv()
@@ -425,7 +426,25 @@ def submit_interview():
 
 @app.route('/leaderboard')
 def leaderboard():
-    return render_template('leaderboard.html')
+    # Get top 5 users based on average interview scores
+    top_users = db.session.query(
+        User,
+        func.avg(InterviewFeedback.total_score).label('avg_score'),
+        func.count(InterviewFeedback.id).label('interview_count')
+    ).join(InterviewFeedback)\
+    .group_by(User.id)\
+    .order_by(desc('avg_score'))\
+    .limit(5)\
+    .all()
+
+    leaderboard_data = [{
+        'rank': idx + 1,
+        'name': user.username,
+        'avg_score': float("%.1f" % avg_score),
+        'interviews': interview_count
+    } for idx, (user, avg_score, interview_count) in enumerate(top_users)]
+
+    return render_template('leaderboard.html', leaderboard_data=leaderboard_data)
 
 @app.route('/about')
 def about():
