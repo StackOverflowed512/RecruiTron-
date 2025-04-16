@@ -35,9 +35,6 @@ email-validator
 google-cloud-aiplatform
 google-generativeai
 
-# File Handling
-secure-filename
-
 # Development and Testing
 pytest
 python-magic
