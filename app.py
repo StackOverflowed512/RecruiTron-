@@ -181,7 +181,7 @@ def get_questions():
         else:
             # Use detailed question generation with project/experience references
             prompt = f"""
-            You are an expert technical interviewer. Generate 5 highly specific technical interview questions based on this candidate's actual experience.
+            You are an expert technical interviewer. Generate 5 highly specific technical interview questions that combine both skills assessment and project experience.
 
             Resume Analysis:
             Role: {analysis.get('role', 'Software Developer')}
@@ -196,19 +196,27 @@ def get_questions():
             {resume_text}
 
             Requirements:
-            1. Each question MUST reference specific projects or work experience from their resume
-            2. Questions should focus on technologies they've actually used
-            3. Include scenario-based questions based on their real projects
-            4. Match the difficulty to their experience level
-            5. Ask about specific technical challenges they've mentioned
+            1. Mix of questions:
+               - 2 questions referencing specific projects/work experience
+               - 2 questions focusing on their technical skills proficiency
+               - 1 question combining both skills and project implementation
+            2. For project questions:
+               - Reference specific projects or work experience
+               - Ask about technical challenges and solutions
+            3. For skills questions:
+               - Focus on their strongest technical skills
+               - Include practical problem-solving scenarios
+               - Test depth of knowledge in specific technologies
+            4. Match difficulty to their experience level
+            5. Ensure questions validate both theoretical knowledge and practical application
 
-            Return ONLY a JSON array with exactly 5 questions, each referencing specific details from their resume.
-            Format: [
-                "Regarding your project X, explain how you implemented Y using Z technology...",
-                "In your role at Company A, you worked on B. How would you...",
-                "You mentioned experience with Technology C in Project D. Describe...",
-                "Based on your work at Company E, design a solution for...",
-                "Considering your implementation of Feature F, explain the technical challenges..."
+            Return ONLY a JSON array with exactly 5 questions in this format:
+            [
+                "Given your experience with [Technology] in [Project], how would you implement...",
+                "Based on your proficiency in [Skill], solve this technical challenge...",
+                "You mentioned using [Technology] at [Company]. Design a solution for...",
+                "Considering your expertise in [Skill], explain how you would handle...",
+                "In [Project], you used [Technology]. Describe the architecture and your implementation..."
             ]
             """
 

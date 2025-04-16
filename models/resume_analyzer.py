@@ -97,17 +97,22 @@ class ResumeAnalyzer:
         Experience: {json.dumps(analysis.get('experience', []))}
 
         Generate 5 technical questions that:
-        1. Test their strongest technical skill
-        2. Validate their project experience
-        3. Challenge their problem-solving abilities
-        4. Assess their system design knowledge
-        5. Evaluate their best practices understanding
+        1. Test deep knowledge of their primary technical skills
+        2. Validate their project experience with specific scenarios
+        3. Challenge their problem-solving abilities using their known technologies
+        4. Assess their system design knowledge within their skill domain
+        5. Evaluate their understanding of best practices in their strongest technologies
+
+        Question Distribution:
+        - 2 skills-focused questions
+        - 2 project-based questions
+        - 1 hybrid question combining skills and project experience
 
         For each question:
-        1. Make it specific to their background
-        2. Reference their actual projects or experience
-        3. Focus on technologies they've used
-        4. Include follow-up points to probe deeper
+        1. Make it specific to their technical background
+        2. Include both theoretical and practical aspects
+        3. Reference actual projects or skills from their profile
+        4. Provide progressive follow-up points
 
         Return as JSON array with objects containing:
         {{
@@ -117,7 +122,8 @@ class ResumeAnalyzer:
             "follow_ups": ["follow-up questions"],
             "difficulty": "easy/medium/hard",
             "category": "technical/design/problem-solving",
-            "related_skills": ["skills being tested"]
+            "related_skills": ["skills being tested"],
+            "project_reference": "specific project or null for pure skill questions"
         }}
         """
 
