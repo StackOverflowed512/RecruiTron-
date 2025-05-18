@@ -1,9 +1,4 @@
-# Web Framework
-Flask
-Flask-SQLAlchemy
-Werkzeug
-
-# Document Processing
+flask
 python-docx
 PyPDF2
 
@@ -26,16 +21,4 @@ Pillow
 
 # Environment and Security
 python-dotenv
-Flask-Login
-email-validator
-
-# Google API
-google-cloud-aiplatform
-google-generativeai
-
-# File Handling
-secure-filename
-
-# Development and Testing
-pytest
-python-magic
+pillow

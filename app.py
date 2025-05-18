@@ -660,4 +660,5 @@ def interview_details(interview_id):
     return render_template('interview_details.html', interview=interview)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5501)
+    port = int(os.environ.get("PORT", 5501))
+    app.run(host="0.0.0.0", port=port)
