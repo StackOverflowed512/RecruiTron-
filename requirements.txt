@@ -1,12 +1,41 @@
-flask
+# Web Framework
+Flask
+Flask-SQLAlchemy
+Werkzeug
+
+# Document Processing
 python-docx
 PyPDF2
-spacy==3.7.2
+
+# NLP and Text Processing
+spacy
 nltk
-textblob==0.17.1
+textblob
+
+# Data Processing
 numpy
+pandas
+
+# Media Processing
 opencv-python
 librosa
 soundfile
+
+# Image Processing
+Pillow
+
+# Environment and Security
 python-dotenv
-pillow
+Flask-Login
+email-validator
+
+# Google API
+google-cloud-aiplatform
+google-generativeai
+
+# File Handling
+secure-filename
+
+# Development and Testing
+pytest
+python-magic
